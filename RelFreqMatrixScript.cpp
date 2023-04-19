@@ -13,7 +13,7 @@ class Coords {
     string iso1;
     string iso2;
 
-    // Don't know how legit this actually is, kind of spaghetti code, but it's required to define the < operator in mapsy
+    // Don't know how legit this actually is, kind of spaghetti code, but it's required to define the < operator in maps
     bool operator<(const Coords &other) const {
         if (iso1 < other.iso1)
             return true;
@@ -28,8 +28,8 @@ int main(int argc, char *argv[]) {
     auto start = chrono::high_resolution_clock::now();
 
     // Reading all files in the current directory
-    if(system("ls > files.txt")!=0)
-        cout<<"Error finding the input files!\n";
+    if (system("ls > files.txt") != 0)
+        cout << "Error finding the input files!\n";
 
     // Reading all csv file names
     fstream pre;
@@ -54,25 +54,24 @@ int main(int argc, char *argv[]) {
     Coords coords;
     string id1;
     float frel;
-    
+
     // Opening and parsing the files
-    //#pragma omp parallel for
     for (auto f : filenames) {
         isoform_file.open(f, ios::in);
         // Extracting the isoform id
         for (int i = 0; i < 3; i++)
             isoform_file >> id1;
-        isoform_file.get();  // To skip blank space
-        getline(isoform_file, id1, '-'); //To delete the gene name
+        isoform_file.get();               // To skip blank space
+        getline(isoform_file, id1, '-');  // To delete the gene name
 
         // For coherence with the other isoforms ids
         id1[0] = tolower(id1[0]);
 
         // Skipping the first two rows
-        getline(isoform_file, buffer);
-        getline(isoform_file, buffer);
+        getline(isoform_file, buffer);  // Isoform details
+        getline(isoform_file, buffer);  // Header (rank,node,Fabs,Frel,Class)
         bool guard = true;
-        #pragma omp parallel while
+#pragma omp parallel while
         while (guard) {
             // Getting the second isoform name
             getline(isoform_file, buffer, ',');
