@@ -8,7 +8,7 @@
 
 using namespace std;
 
-class Coords {
+/*class Coords {
    public:
     string iso1;
     string iso2;
@@ -21,7 +21,7 @@ class Coords {
             return false;
         return iso2 < other.iso2;
     }
-};
+};*/
 
 int main(int argc, char *argv[]) {
     cout << "Starting...\n";
@@ -41,7 +41,7 @@ int main(int argc, char *argv[]) {
     vector<string> filenames;  // Vector containing the isoform files names
     string buffer;
     while (pre >> buffer) {
-        if (buffer.find(".expansion") != string::npos) {
+        if (buffer.find(".expansion") != string::npos) {  // Saving only the expansion files
             filenames.push_back(buffer);
         }
     }
@@ -49,10 +49,9 @@ int main(int argc, char *argv[]) {
     filenames.shrink_to_fit();
 
     // Creating the matrix: coords are the isoforms, float is the rel frequency
-    map<Coords, float> matrix;
+    map<pair<string, string>, float> matrix;
     fstream isoform_file;
-    Coords coords;
-    string id1;
+    string iso1, iso2;
     float frel;
 
     // Opening and parsing the files
@@ -60,12 +59,12 @@ int main(int argc, char *argv[]) {
         isoform_file.open(f, ios::in);
         // Extracting the isoform id
         for (int i = 0; i < 3; i++)
-            isoform_file >> id1;
-        isoform_file.get();               // To skip blank space
-        getline(isoform_file, id1, '-');  // To delete the gene name
+            isoform_file >> iso1;
+        isoform_file.get();                // To skip blank space
+        getline(isoform_file, iso1, '-');  // To delete the gene name
 
         // For coherence with the other isoforms ids
-        id1[0] = tolower(id1[0]);
+        iso1[0] = tolower(iso1[0]);
 
         // Skipping the first two rows
         getline(isoform_file, buffer);  // Isoform details
@@ -77,8 +76,7 @@ int main(int argc, char *argv[]) {
             getline(isoform_file, buffer, ',');
             getline(isoform_file, buffer, ',');
             if (!isoform_file.eof()) {  // Control for the last row
-                coords.iso2 = buffer;
-                coords.iso1 = id1;
+                iso2 = buffer;
                 // cout << coords.iso1 << " ";
                 // cout << buffer << " ";
                 //   Another dummy reading
@@ -87,7 +85,7 @@ int main(int argc, char *argv[]) {
                 getline(isoform_file, buffer, ',');
                 frel = stof(buffer);
                 // cout << frel << endl;
-                matrix[coords] = frel;
+                matrix[make_pair(iso1, iso2)] = frel;
             } else {
                 guard = false;
             }
@@ -99,7 +97,7 @@ int main(int argc, char *argv[]) {
     fstream csv;
     csv.open("matrix.csv", ios::out);
     for (const auto &elem : matrix) {
-        csv << setprecision(14) << elem.first.iso1 << ';' << elem.first.iso2 << ';' << elem.second << '\n';
+        csv << setprecision(14) << elem.first.first << ';' << elem.first.second << ';' << elem.second << '\n';
     }
 
     auto stop = chrono::high_resolution_clock::now();
