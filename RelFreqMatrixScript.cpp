@@ -8,21 +8,6 @@
 
 using namespace std;
 
-/*class Coords {
-   public:
-    string iso1;
-    string iso2;
-
-    // Don't know how legit this actually is, kind of spaghetti code, but it's required to define the < operator in maps
-    bool operator<(const Coords &other) const {
-        if (iso1 < other.iso1)
-            return true;
-        if (other.iso1 < iso1)
-            return false;
-        return iso2 < other.iso2;
-    }
-};*/
-
 int main(int argc, char *argv[]) {
     cout << "Starting...\n";
     auto start = chrono::high_resolution_clock::now();
@@ -70,21 +55,17 @@ int main(int argc, char *argv[]) {
         getline(isoform_file, buffer);  // Isoform details
         getline(isoform_file, buffer);  // Header (rank,node,Fabs,Frel,Class)
         bool guard = true;
-#pragma omp parallel while
         while (guard) {
             // Getting the second isoform name
             getline(isoform_file, buffer, ',');
             getline(isoform_file, buffer, ',');
             if (!isoform_file.eof()) {  // Control for the last row
                 iso2 = buffer;
-                // cout << coords.iso1 << " ";
-                // cout << buffer << " ";
                 //   Another dummy reading
                 getline(isoform_file, buffer, ',');
                 // Getting the relative frequency
                 getline(isoform_file, buffer, ',');
                 frel = stof(buffer);
-                // cout << frel << endl;
                 matrix[make_pair(iso1, iso2)] = frel;
             } else {
                 guard = false;
@@ -99,6 +80,7 @@ int main(int argc, char *argv[]) {
     for (const auto &elem : matrix) {
         csv << setprecision(14) << elem.first.first << ';' << elem.first.second << ';' << elem.second << '\n';
     }
+    csv.close();
 
     auto stop = chrono::high_resolution_clock::now();
     auto duration = chrono::duration_cast<chrono::milliseconds>(stop - start);
