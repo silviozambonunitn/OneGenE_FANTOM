@@ -74,6 +74,7 @@ int main(int argc, char *argv[]) {
     // Saving the matrix on a csv file
     fstream csv;
     csv.open("matrix.csv", ios::out);
+    csv<<"Seed;Leaf;RelativeFrequency\n";
     for (const auto &elem : matrix) {
         csv << elem.first.first << ';' << elem.first.second << ';' << elem.second << '\n';
     }
