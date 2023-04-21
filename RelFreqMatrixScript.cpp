@@ -1,7 +1,6 @@
 #include <chrono>
 #include <cstring>
 #include <fstream>
-#include <iomanip>
 #include <iostream>
 #include <map>
 #include <vector>
@@ -34,10 +33,9 @@ int main(int argc, char *argv[]) {
     filenames.shrink_to_fit();
 
     // Creating the matrix: coords are the isoforms, float is the rel frequency
-    map<pair<string, string>, float> matrix;
+    map<pair<string, string>, string> matrix;
     fstream isoform_file;
-    string iso1, iso2;
-    float frel;
+    string iso1, iso2, frel;
 
     // Opening and parsing the files
     for (auto f : filenames) {
@@ -64,8 +62,7 @@ int main(int argc, char *argv[]) {
                 //   Another dummy reading
                 getline(isoform_file, buffer, ',');
                 // Getting the relative frequency
-                getline(isoform_file, buffer, ',');
-                frel = stof(buffer);
+                getline(isoform_file, frel, ',');
                 matrix[make_pair(iso1, iso2)] = frel;
             } else {
                 guard = false;
@@ -78,7 +75,7 @@ int main(int argc, char *argv[]) {
     fstream csv;
     csv.open("matrix.csv", ios::out);
     for (const auto &elem : matrix) {
-        csv << setprecision(14) << elem.first.first << ';' << elem.first.second << ';' << elem.second << '\n';
+        csv << elem.first.first << ';' << elem.first.second << ';' << elem.second << '\n';
     }
     csv.close();
 
