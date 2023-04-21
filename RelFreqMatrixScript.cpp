@@ -11,6 +11,12 @@ int main(int argc, char *argv[]) {
     cout << "Starting...\n";
     auto start = chrono::high_resolution_clock::now();
 
+    //Activate for efficiency
+    /*
+    if (system("rm *.interactions") != 0)
+        cout << "Error deleting the .interactions files\n";
+    */
+
     // Reading all files in the current directory
     if (system("ls > files.txt") != 0)
         cout << "Error finding the input files!\n";
@@ -74,7 +80,7 @@ int main(int argc, char *argv[]) {
     // Saving the matrix on a csv file
     fstream csv;
     csv.open("matrix.csv", ios::out);
-    csv<<"Seed;Leaf;RelativeFrequency\n";
+    csv << "Seed;Leaf;RelativeFrequency\n";
     for (const auto &elem : matrix) {
         csv << elem.first.first << ';' << elem.first.second << ';' << elem.second << '\n';
     }
