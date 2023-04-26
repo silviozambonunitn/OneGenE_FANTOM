@@ -11,7 +11,7 @@ int main(int argc, char *argv[]) {
     cout << "Starting...\n";
     auto start = chrono::high_resolution_clock::now();
 
-    //Activate for efficiency
+    //Activate for storage efficiency
     /*
     if (system("rm *.interactions") != 0)
         cout << "Error deleting the .interactions files\n";
@@ -52,9 +52,6 @@ int main(int argc, char *argv[]) {
         isoform_file.get();                // To skip blank space
         getline(isoform_file, iso1, '-');  // To delete the gene name
 
-        // For coherence with the other isoforms ids
-        iso1[0] = tolower(iso1[0]);
-
         // Skipping the first two rows
         getline(isoform_file, buffer);  // Isoform details
         getline(isoform_file, buffer);  // Header (rank,node,Fabs,Frel,Class)
@@ -65,6 +62,7 @@ int main(int argc, char *argv[]) {
             getline(isoform_file, buffer, ',');
             if (!isoform_file.eof()) {  // Control for the last row
                 iso2 = buffer;
+                iso2[0]=toupper(iso2[0]); // For coherence with the other isoform id
                 //   Another dummy reading
                 getline(isoform_file, buffer, ',');
                 // Getting the relative frequency
