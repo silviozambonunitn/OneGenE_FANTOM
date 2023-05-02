@@ -2,7 +2,6 @@
 #include <cstring>
 #include <fstream>
 #include <iostream>
-#include <map>
 #include <vector>
 
 using namespace std;
@@ -10,11 +9,11 @@ using namespace std;
 int main(int argc, char *argv[]) {
     cout << "Starting...\n";
     auto start = chrono::high_resolution_clock::now();
-
+    
     // For storage and fs efficiency
     if (system("rm *.interactions") != 0)
         cout << "Error deleting the .interactions files\n";
-    
+
     // Reading all files in the current directory, simple enough but bad idea for large number of files
     if (system("ls > files.txt") != 0)
         cout << "Error finding the input files!\n";
@@ -36,10 +35,10 @@ int main(int argc, char *argv[]) {
     pre.close();
     filenames.shrink_to_fit();
 
-    // Creating the matrix: coords are the isoforms, float is the rel frequency
-    map<pair<string, string>, string> matrix;
-    fstream isoform_file;
+    fstream isoform_file, csv;
     string iso1, iso2, frel;
+    csv.open("matrix.csv", ios::out);
+    csv << "Seed;Leaf;RelativeFrequency\n";
 
     // Opening and parsing the files
     for (string f : filenames) {
@@ -51,8 +50,8 @@ int main(int argc, char *argv[]) {
         getline(isoform_file, iso1, '-');  // To delete the gene name
 
         // Skipping the first two rows
-        getline(isoform_file, buffer);  // Isoform details
-        getline(isoform_file, buffer);  // Header (rank,node,Fabs,Frel,Class)
+        getline(isoform_file, buffer);  // Deleting isoform details
+        getline(isoform_file, buffer);  // Deleting the header (rank,node,Fabs,Frel,Class)
         bool guard = true;
         while (guard) {
             // Getting the second isoform name
@@ -65,27 +64,19 @@ int main(int argc, char *argv[]) {
                 getline(isoform_file, buffer, ',');
                 // Getting the relative frequency
                 getline(isoform_file, frel, ',');
+                csv << iso1 << ';' << iso2 << ';' << frel << '\n';
                 matrix[make_pair(iso1, iso2)] = frel;
             } else {
                 guard = false;
             }
         }
         isoform_file.close();
-        
+
         // Deleting the file for fs efficiency, activate if needed
         string s = "rm " + f;
         if (system(s.c_str()) != 0) {
             cout << "Error deleting the isoform file";
         }
-        
-    }
-
-    // Saving the matrix on a csv file
-    fstream csv;
-    csv.open("matrix.csv", ios::out);
-    csv << "Seed;Leaf;RelativeFrequency\n";
-    for (const auto &elem : matrix) {
-        csv << elem.first.first << ';' << elem.first.second << ';' << elem.second << '\n';
     }
     csv.close();
 
