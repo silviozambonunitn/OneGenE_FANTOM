@@ -11,13 +11,13 @@ int main(int argc, char *argv[]) {
     cout << "Starting...\n";
     auto start = chrono::high_resolution_clock::now();
 
-    //Activate for storage efficiency
-    /*
+    // Activate for storage efficiency
+    
     if (system("rm *.interactions") != 0)
         cout << "Error deleting the .interactions files\n";
-    */
+    
 
-    // Reading all files in the current directory
+    // Reading all files in the current directory, simple enough but bad idea for large number of files
     if (system("ls > files.txt") != 0)
         cout << "Error finding the input files!\n";
 
@@ -44,7 +44,7 @@ int main(int argc, char *argv[]) {
     string iso1, iso2, frel;
 
     // Opening and parsing the files
-    for (auto f : filenames) {
+    for (string f : filenames) {
         isoform_file.open(f, ios::in);
         // Extracting the isoform id
         for (int i = 0; i < 3; i++)
@@ -62,7 +62,7 @@ int main(int argc, char *argv[]) {
             getline(isoform_file, buffer, ',');
             if (!isoform_file.eof()) {  // Control for the last row
                 iso2 = buffer;
-                iso2[0]=toupper(iso2[0]); // For coherence with the other isoform id
+                iso2[0] = toupper(iso2[0]);  // For coherence with the other isoform id
                 //   Another dummy reading
                 getline(isoform_file, buffer, ',');
                 // Getting the relative frequency
@@ -73,6 +73,13 @@ int main(int argc, char *argv[]) {
             }
         }
         isoform_file.close();
+        
+        // Deleting the file for fs efficiency, activate if needed
+        string s = "rm " + f;
+        if (system(s.c_str()) != 0) {
+            cout << "Error deleting the isoform file";
+        }
+        
     }
 
     // Saving the matrix on a csv file
