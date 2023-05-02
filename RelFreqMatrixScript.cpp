@@ -11,12 +11,10 @@ int main(int argc, char *argv[]) {
     cout << "Starting...\n";
     auto start = chrono::high_resolution_clock::now();
 
-    // Activate for storage efficiency
-    
+    // For storage and fs efficiency
     if (system("rm *.interactions") != 0)
         cout << "Error deleting the .interactions files\n";
     
-
     // Reading all files in the current directory, simple enough but bad idea for large number of files
     if (system("ls > files.txt") != 0)
         cout << "Error finding the input files!\n";
