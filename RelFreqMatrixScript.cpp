@@ -6,26 +6,27 @@
 
 using namespace std;
 
+// Avoiding function calls as much as possible for efficiency
 int main(int argc, char *argv[]) {
     cout << "Starting...\n";
     auto start = chrono::high_resolution_clock::now();
-    
+
     // For storage and fs efficiency
     if (system("rm *.interactions") != 0)
-        cout << "Error deleting the .interactions files\n";
+        perror("Error deleting the .interactions files\n");
 
     // Reading all files in the current directory, simple enough but bad idea for large number of files
     if (system("ls > files.txt") != 0)
-        cout << "Error finding the input files!\n";
+        perror("Error finding the input files!\n");
 
     // Reading all csv file names
-    fstream pre;
-    pre.open("files.txt");
+    ifstream pre("files.txt");
     if (pre.fail()) {
-        cout << "Error opening the file \"files.txt\" in writing mode\n";
+        perror("Error opening the file \"files.txt\" in writing mode\n");
         exit(1);
     }
     vector<string> filenames;  // Vector containing the isoform files names
+    filenames.reserve(89000);  // Numero delle isoforme
     string buffer;
     while (pre >> buffer) {
         if (buffer.find(".expansion") != string::npos) {  // Saving only the expansion files
@@ -35,9 +36,9 @@ int main(int argc, char *argv[]) {
     pre.close();
     filenames.shrink_to_fit();
 
-    fstream isoform_file, csv;
+    fstream isoform_file;
     string iso1, iso2, frel;
-    csv.open("matrix.csv", ios::out);
+    ofstream csv("matrix.csv");
     csv << "Seed;Leaf;RelativeFrequency\n";
 
     // Opening and parsing the files
@@ -59,23 +60,22 @@ int main(int argc, char *argv[]) {
             getline(isoform_file, buffer, ',');
             if (!isoform_file.eof()) {  // Control for the last row
                 iso2 = buffer;
-                iso2[0] = toupper(iso2[0]);  // For coherence with the other isoform id
-                //   Another dummy reading
-                getline(isoform_file, buffer, ',');
-                // Getting the relative frequency
-                getline(isoform_file, frel, ',');
+                iso2[0] = toupper(iso2[0]);          // For coherence with the other isoform id
+                getline(isoform_file, buffer, ',');  // Another dummy reading
+                getline(isoform_file, frel, ',');    // Getting the relative frequency
                 csv << iso1 << ';' << iso2 << ';' << frel << '\n';
             } else {
                 guard = false;
             }
         }
         isoform_file.close();
-
+        /*
         // Deleting the file for fs efficiency, activate if needed
         string s = "rm " + f;
         if (system(s.c_str()) != 0) {
-            cout << "Error deleting the isoform file";
+            perror("Error deleting the isoform file");
         }
+        */
     }
     csv.close();
 
