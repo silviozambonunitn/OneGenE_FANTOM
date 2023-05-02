@@ -65,7 +65,6 @@ int main(int argc, char *argv[]) {
                 // Getting the relative frequency
                 getline(isoform_file, frel, ',');
                 csv << iso1 << ';' << iso2 << ';' << frel << '\n';
-                matrix[make_pair(iso1, iso2)] = frel;
             } else {
                 guard = false;
             }
