@@ -1,9 +1,10 @@
+#include <dirent.h>
+
 #include <chrono>
 #include <cstring>
 #include <fstream>
 #include <iostream>
 #include <vector>
-#include <dirent.h>
 
 using namespace std;
 
@@ -13,13 +14,11 @@ int main(int argc, char *argv[]) {
     auto start = chrono::high_resolution_clock::now();
 
     // For storage and fs efficiency
-    /*if (system("rm *.interactions") != 0) {
-        perror("Error deleting the .interactions files\n");
-        exit(1);
-    }*/
-    
+    // static_cast<void>(system("rm *.interactions"));
+
+    // Getting all the expansion filenames
     vector<string> filenames;  // Vector containing the isoform files names
-    filenames.reserve(89000);  // Numero delle isoforme
+    filenames.reserve(89000);  // Number of isoforms
     DIR *dir;
     struct dirent *entry;
     if ((dir = opendir("./")) != nullptr) {
@@ -31,10 +30,10 @@ int main(int argc, char *argv[]) {
         }
         closedir(dir);
     } else {
-        perror("Error opening directory");
+        cout << "Error opening directory";
         exit(1);
     }
-    filenames.shrink_to_fit(); //Testare se utile
+    // filenames.shrink_to_fit();  // Useless?
 
     fstream isoform_file;
     string iso1, iso2, frel;
@@ -71,16 +70,16 @@ int main(int argc, char *argv[]) {
         }
         isoform_file.close();
         /*
-        // Deleting the file for fs efficiency, activate if needed
+        // Deleting the file after reading for fs efficiency, activate if needed
         string s = "rm " + f;
         if (system(s.c_str()) != 0) {
-            perror("Error deleting the isoform file");
+            cout << "Error deleting the isoform file";
         }
         */
     }
     csv.close();
 
-    //Calculating the running time
+    // Calculating the running time
     auto stop = chrono::high_resolution_clock::now();
     auto duration = chrono::duration_cast<chrono::milliseconds>(stop - start);
     cout << "Done! Running time " << duration.count() << " milliseconds\n";
