@@ -3,6 +3,7 @@
 #include <fstream>
 #include <iostream>
 #include <vector>
+#include <dirent.h>
 
 using namespace std;
 
@@ -12,29 +13,28 @@ int main(int argc, char *argv[]) {
     auto start = chrono::high_resolution_clock::now();
 
     // For storage and fs efficiency
-    if (system("rm *.interactions") != 0)
+    /*if (system("rm *.interactions") != 0) {
         perror("Error deleting the .interactions files\n");
-
-    // Reading all files in the current directory, simple enough but bad idea for large number of files
-    if (system("ls > files.txt") != 0)
-        perror("Error finding the input files!\n");
-
-    // Reading all csv file names
-    ifstream pre("files.txt");
-    if (pre.fail()) {
-        perror("Error opening the file \"files.txt\" in writing mode\n");
         exit(1);
-    }
+    }*/
+    
     vector<string> filenames;  // Vector containing the isoform files names
     filenames.reserve(89000);  // Numero delle isoforme
-    string buffer;
-    while (pre >> buffer) {
-        if (buffer.find(".expansion") != string::npos) {  // Saving only the expansion files
-            filenames.push_back(buffer);
+    DIR *dir;
+    struct dirent *entry;
+    if ((dir = opendir("./")) != nullptr) {
+        while ((entry = readdir(dir)) != nullptr) {
+            string filename = entry->d_name;
+            if (filename.find(".expansion") != string::npos) {
+                filenames.push_back(filename);
+            }
         }
+        closedir(dir);
+    } else {
+        perror("Error opening directory");
+        exit(1);
     }
-    pre.close();
-    filenames.shrink_to_fit();
+    filenames.shrink_to_fit(); //Testare se utile
 
     fstream isoform_file;
     string iso1, iso2, frel;
@@ -48,9 +48,10 @@ int main(int argc, char *argv[]) {
         for (int i = 0; i < 3; i++)
             isoform_file >> iso1;
         isoform_file.get();                // To skip blank space
-        getline(isoform_file, iso1, '-');  // To delete the gene name
+        getline(isoform_file, iso1, '-');  // To get the transcript id
 
         // Skipping the first two rows
+        string buffer;
         getline(isoform_file, buffer);  // Deleting isoform details
         getline(isoform_file, buffer);  // Deleting the header (rank,node,Fabs,Frel,Class)
         bool guard = true;
@@ -79,6 +80,7 @@ int main(int argc, char *argv[]) {
     }
     csv.close();
 
+    //Calculating the running time
     auto stop = chrono::high_resolution_clock::now();
     auto duration = chrono::duration_cast<chrono::milliseconds>(stop - start);
     cout << "Done! Running time " << duration.count() << " milliseconds\n";
