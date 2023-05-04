@@ -42,6 +42,10 @@ int main(int argc, char *argv[]) {
     // Opening and parsing the files
     for (string f : filenames) {
         isoform_file.open(f, ios::in);
+        if(isoform_file.fail()){
+            cout<<"Errore nell'apertura delle isoforme\n";
+            exit(1);
+        }
         // Extracting the isoform id
         for (int i = 0; i < 3; i++)
             isoform_file >> iso1;
