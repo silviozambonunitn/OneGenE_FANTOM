@@ -1,0 +1,6 @@
+*.expansion
+a.out
+frequenciesDistribution.jpeg
+.RData
+.Rhistory
+*.csv

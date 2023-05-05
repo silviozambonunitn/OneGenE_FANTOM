@@ -1,0 +1,12 @@
+{
+    "files.associations": {
+        "fstream": "cpp",
+        "array": "cpp",
+        "tuple": "cpp",
+        "utility": "cpp",
+        "vector": "cpp",
+        "*.tcc": "cpp",
+        "string": "cpp",
+        "cstdio": "cpp"
+    }
+}

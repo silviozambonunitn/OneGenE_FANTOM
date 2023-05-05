@@ -2,7 +2,7 @@
 import csv
 import glob
 filenames = glob.glob("./*.expansion")
-outputCsv = open("matrixPY.csv","wt")
+outputCsv = open("FANTOM_RelativeFrequancyMatrix_PY.csv","wt")
 csvWriter = csv.writer(outputCsv, delimiter=";", lineterminator="\n")
 csvWriter.writerow(["Seed","Leaf","RelativeFrequency"])
 for f in filenames:
