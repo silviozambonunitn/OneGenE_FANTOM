@@ -32,10 +32,10 @@ int main(int argc, char *argv[]) {
         cout << "Error opening directory";
         exit(1);
     }
-    // filenames.shrink_to_fit();  // Useless?
+    filenames.shrink_to_fit();  // Useless?
 
     fstream isoform_file;
-    string iso1, iso2, frel;
+    string seed, leaf, frel;
     ofstream csv("FANTOM_RelativeFrequencyMatrix.csv");
     csv << "Seed;Leaf;RelativeFrequency\n";
 
@@ -48,9 +48,9 @@ int main(int argc, char *argv[]) {
         }
         // Extracting the isoform id
         for (int i = 0; i < 3; i++)
-            isoform_file >> iso1;
+            isoform_file >> seed;
         isoform_file.get();                // To skip blank space
-        getline(isoform_file, iso1, '-');  // To get the transcript id
+        getline(isoform_file, seed, '-');  // To get the transcript id from the TID-GeneName string
 
         // Skipping the first two rows
         string buffer;
@@ -62,11 +62,11 @@ int main(int argc, char *argv[]) {
             getline(isoform_file, buffer, ',');
             getline(isoform_file, buffer, ',');
             if (!isoform_file.eof()) {  // Control for the last row
-                iso2 = buffer;
-                iso2[0] = toupper(iso2[0]);          // For coherence with the other isoform id
+                leaf = buffer;
+                leaf[0] = toupper(leaf[0]);          // For coherence with the other isoform id
                 getline(isoform_file, buffer, ',');  // Another dummy reading
                 getline(isoform_file, frel, ',');    // Getting the relative frequency
-                csv << iso1 << ';' << iso2 << ';' << frel << '\n';
+                csv << seed << ';' << leaf << ';' << frel << '\n';
             } else {
                 guard = false;
             }
