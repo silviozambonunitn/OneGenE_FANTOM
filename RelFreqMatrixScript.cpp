@@ -87,5 +87,5 @@ int main(int argc, char *argv[]) {
     auto duration = chrono::duration_cast<chrono::milliseconds>(stop - start);
     cout << "Done! Running time " << duration.count() << " milliseconds\n";
 
-    return 0;
+    return EXIT_SUCCESS;
 }
