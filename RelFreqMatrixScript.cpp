@@ -1,13 +1,34 @@
 #include <dirent.h>
+
 #include <chrono>
 #include <cstring>
 #include <fstream>
 #include <iostream>
+#include <map>
 #include <vector>
 
 using namespace std;
 
-// Avoiding function calls as much as possible for efficiency
+#define N_ISOFORMS 88000
+
+const map<string, string> &get_dictionary(string path) {
+    map<string, string> dictionary;
+    ifstream file(path);
+    if (file.fail()) {
+        cout << "Error opening the dictionary file!\n";
+        exit(EXIT_FAILURE);
+    }
+    string tid, name;
+    while (!file.eof()) {
+        getline(file, tid, '|');
+        getline(file, name, '|');
+        getline(file, name);  // Make sure it ends with the line
+        dictionary[tid] = name;
+    }
+    return dictionary;
+}
+
+// Avoiding recurring function calls as much as possible for efficiency
 int main(int argc, char *argv[]) {
     cout << "Starting...\n";
     auto start = chrono::high_resolution_clock::now();
@@ -30,27 +51,33 @@ int main(int argc, char *argv[]) {
         closedir(dir);
     } else {
         cout << "Error opening directory";
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     filenames.shrink_to_fit();  // Useless?
+    if (filenames.empty()) {
+        cout << "No isoform file found\n";
+        exit(EXIT_FAILURE);
+    }
+
+    const map<string, string> dictionary = get_dictionary("/storage/shared/fantom/tcode-gene.csv");
 
     fstream isoform_file;
-    string seed, leaf, frel;
+    string seed_transcript, leaf_transcript, frel, seed_gene, leaf_gene;
     ofstream csv("/storage/shared/fantom/FANTOM_RelativeFrequencyMatrix.csv");
     csv << "Seed;Leaf;RelativeFrequency\n";
 
     // Opening and parsing the files
     for (string f : filenames) {
         isoform_file.open(f, ios::in);
-        if(isoform_file.fail()){
-            cout<<"Errore nell'apertura delle isoforme\n";
-            exit(1);
+        if (isoform_file.fail()) {
+            cout << "Errore nell'apertura delle isoforme\n";
+            exit(EXIT_FAILURE);
         }
         // Extracting the isoform id
         for (int i = 0; i < 3; i++)
-            isoform_file >> seed;
-        isoform_file.get();                // To skip blank space
-        getline(isoform_file, seed, '-');  // To get the transcript id from the TID-GeneName string
+            isoform_file >> seed_transcript;
+        isoform_file.get();                           // To skip blank space
+        getline(isoform_file, seed_transcript, '-');  // To get the transcript id from the TID-GeneName string
 
         // Skipping the first two rows
         string buffer;
@@ -62,11 +89,13 @@ int main(int argc, char *argv[]) {
             getline(isoform_file, buffer, ',');
             getline(isoform_file, buffer, ',');
             if (!isoform_file.eof()) {  // Control for the last row
-                leaf = buffer;
-                leaf[0] = toupper(leaf[0]);          // For coherence with the other isoform id
-                getline(isoform_file, buffer, ',');  // Another dummy reading
-                getline(isoform_file, frel, ',');    // Getting the relative frequency
-                csv << seed << ';' << leaf << ';' << frel << '\n';
+                leaf_transcript = buffer;
+                leaf_transcript[0] = toupper(leaf_transcript[0]);  // For coherence with the other isoform id
+                getline(isoform_file, buffer, ',');                // Another dummy reading
+                getline(isoform_file, frel, ',');                  // Getting the relative frequency
+                seed_gene = dictionary.at(seed_transcript);
+                leaf_gene = dictionary.at(leaf_transcript);
+                csv << seed_gene << ';' << leaf_gene << ';' << frel << '\n';
             } else {
                 guard = false;
             }
