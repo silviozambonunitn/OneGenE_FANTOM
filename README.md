@@ -1,5 +1,5 @@
 # OneGenE_FANTOM
-Repository of my internship in the RDDS lab of the University of Trento
+Repository of my internship in the RDDS lab of the University of Trento. This includes scripts to post process and validate data from the OneGenE project, elaborated by the Tn-Grid project using BOINC. This repository contains absolute paths to files in the RDDS1 server, so it's meant to be executed there after git pulling. Some scripts, expecially in R, can't run on systems having less than 80 GB of RAM. 
 ## PI
 Toma Tebaldi, Enrico Blanzieri
 ### What is this about?
