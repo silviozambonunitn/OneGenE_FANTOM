@@ -1,6 +1,6 @@
 #opening and parsing csv matrix file
 setwd(here::here())
-frequencies <- read.csv(file='matrix.csv', sep=';', colClasses = c("character", "character", "numeric"))
+frequencies = read.csv(file='/storage/shared/fantom/FANTOM_RelativeFrequencyMatrix.csv', sep=';', colClasses = c("character", "character", "numeric"))
 
 library(ggplot2)
 ggplot(frequencies, aes(RelativeFrequency))+

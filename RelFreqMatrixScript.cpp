@@ -36,7 +36,7 @@ int main(int argc, char *argv[]) {
 
     fstream isoform_file;
     string seed, leaf, frel;
-    ofstream csv("FANTOM_RelativeFrequencyMatrix.csv");
+    ofstream csv("/storage/shared/fantom/FANTOM_RelativeFrequencyMatrix.csv");
     csv << "Seed;Leaf;RelativeFrequency\n";
 
     // Opening and parsing the files
