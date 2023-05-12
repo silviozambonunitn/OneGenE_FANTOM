@@ -57,8 +57,9 @@ int main(int argc, char *argv[]) {
         exit(EXIT_FAILURE);
     }
 
-    map<string, string> dictionary;
-    get_dictionary("/storage/shared/fantom/tcode-gene.csv", dictionary);
+    // Activate to replace TID with real names, also line ~96
+    // map<string, string> dictionary;
+    // get_dictionary("/storage/shared/fantom/tcode-gene.csv", dictionary);
 
     fstream isoform_file;
     string seed_transcript, leaf_transcript, frel, seed_gene, leaf_gene;
@@ -91,10 +92,13 @@ int main(int argc, char *argv[]) {
                 leaf_transcript = buffer;
                 leaf_transcript[0] = toupper(leaf_transcript[0]);  // For coherence with the other isoform id
                 getline(isoform_file, buffer, ',');                // Another dummy reading
-                getline(isoform_file, frel, ',');                  // Getting the relative frequency
+                getline(isoform_file, frel, ',');
+                /*
                 seed_gene = dictionary.at(seed_transcript);
                 leaf_gene = dictionary.at(leaf_transcript);
                 csv << seed_gene << ';' << leaf_gene << ';' << frel << '\n';
+                */
+                csv << seed_transcript << ';' << leaf_transcript << ';' << frel << '\n';
             } else {
                 guard = false;
             }
