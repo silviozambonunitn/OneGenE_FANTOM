@@ -11,8 +11,7 @@ using namespace std;
 
 #define N_ISOFORMS 88000
 
-const map<string, string> &get_dictionary(string path) {
-    map<string, string> dictionary;
+void get_dictionary(string path, map<string, string> &dictionary) {
     ifstream file(path);
     if (file.fail()) {
         cout << "Error opening the dictionary file!\n";
@@ -25,7 +24,6 @@ const map<string, string> &get_dictionary(string path) {
         getline(file, name);  // Make sure it ends with the line
         dictionary[tid] = name;
     }
-    return dictionary;
 }
 
 // Avoiding recurring function calls as much as possible for efficiency
@@ -59,7 +57,8 @@ int main(int argc, char *argv[]) {
         exit(EXIT_FAILURE);
     }
 
-    const map<string, string> dictionary = get_dictionary("/storage/shared/fantom/tcode-gene.csv");
+    map<string, string> dictionary;
+    get_dictionary("/storage/shared/fantom/tcode-gene.csv", dictionary);
 
     fstream isoform_file;
     string seed_transcript, leaf_transcript, frel, seed_gene, leaf_gene;
