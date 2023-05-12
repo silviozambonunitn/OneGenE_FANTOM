@@ -28,6 +28,10 @@ void get_dictionary(string path, map<string, string> &dictionary) {
 
 // Avoiding recurring function calls as much as possible for efficiency
 int main(int argc, char *argv[]) {
+    bool use_names = false;
+    if (argc > 1) {
+        use_names = true;
+    }
     cout << "Starting...\n";
     auto start = chrono::high_resolution_clock::now();
 
@@ -57,9 +61,10 @@ int main(int argc, char *argv[]) {
         exit(EXIT_FAILURE);
     }
 
-    // Activate to replace TID with real names, also line ~96
-    // map<string, string> dictionary;
-    // get_dictionary("/storage/shared/fantom/tcode-gene.csv", dictionary);
+    // Replace TID with real names, also line ~96
+    map<string, string> dictionary;
+    if (use_names)
+        get_dictionary("/storage/shared/fantom/tcode-gene.csv", dictionary);
 
     fstream isoform_file;
     string seed_transcript, leaf_transcript, frel, seed_gene, leaf_gene;
@@ -93,12 +98,13 @@ int main(int argc, char *argv[]) {
                 leaf_transcript[0] = toupper(leaf_transcript[0]);  // For coherence with the other isoform id
                 getline(isoform_file, buffer, ',');                // Another dummy reading
                 getline(isoform_file, frel, ',');
-                /*
-                seed_gene = dictionary.at(seed_transcript);
-                leaf_gene = dictionary.at(leaf_transcript);
-                csv << seed_gene << ';' << leaf_gene << ';' << frel << '\n';
-                */
-                csv << seed_transcript << ';' << leaf_transcript << ';' << frel << '\n';
+                if (use_names) {
+                    seed_gene = dictionary.at(seed_transcript);
+                    leaf_gene = dictionary.at(leaf_transcript);
+                    csv << seed_gene << ';' << leaf_gene << ';' << frel << '\n';
+                } else {
+                    csv << seed_transcript << ';' << leaf_transcript << ';' << frel << '\n';
+                }
             } else {
                 guard = false;
             }
