@@ -1,5 +1,4 @@
 #include <dirent.h>
-
 #include <chrono>
 #include <cstring>
 #include <fstream>
@@ -14,7 +13,7 @@ using namespace std;
 void get_dictionary(const string path, map<string, string> &dictionary) {
     ifstream file(path);
     if (file.fail()) {
-        cout << "Error opening the dictionary file!\n";
+        cout << "Error opening the TIDs-genenames file!\n";
         exit(EXIT_FAILURE);
     }
     string tid, name;
@@ -52,7 +51,7 @@ void get_filenames(const string path, vector<string> &filenames) {
 // Avoiding recurring function calls as much as possible for efficiency
 int main(int argc, char *argv[]) {
     bool use_names = false;
-    if (argc > 1 && argv[1] == "-n") {
+    if (argc > 1) {
         use_names = true;
         cout << "Using names instead of TIDs\n";
     }
@@ -64,7 +63,7 @@ int main(int argc, char *argv[]) {
 
     // Getting all the expansion filenames
     vector<string> filenames;
-    get_filenames("./", filenames);
+    get_filenames("./dataset/", filenames);
 
     // Replace TID with real names
     map<string, string> dictionary;
@@ -75,11 +74,16 @@ int main(int argc, char *argv[]) {
     fstream isoform_file;
     string seed_transcript, leaf_transcript, frel, seed_gene, leaf_gene;
     ofstream csv("/storage/shared/fantom/FANTOM_RelativeFrequencyMatrix.csv");
+    if(csv.fail()){
+        cout<<"Errore nell'apertura del file di output\n";
+        exit(EXIT_FAILURE);
+    }
     csv << "Seed;Leaf;RelativeFrequency\n";
 
     // Opening and parsing the files
+    string dir="./dataset/";
     for (string f : filenames) {
-        isoform_file.open(f, ios::in);
+        isoform_file.open(dir+f, ios::in);
         if (isoform_file.fail()) {
             cout << "Errore nell'apertura delle isoforme\n";
             exit(EXIT_FAILURE);
