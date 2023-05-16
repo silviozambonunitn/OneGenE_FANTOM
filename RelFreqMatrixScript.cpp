@@ -11,7 +11,7 @@ using namespace std;
 
 #define N_ISOFORMS 88000
 
-void get_dictionary(string path, map<string, string> &dictionary) {
+void get_dictionary(const string path, map<string, string> &dictionary) {
     ifstream file(path);
     if (file.fail()) {
         cout << "Error opening the dictionary file!\n";
@@ -26,24 +26,11 @@ void get_dictionary(string path, map<string, string> &dictionary) {
     }
 }
 
-// Avoiding recurring function calls as much as possible for efficiency
-int main(int argc, char *argv[]) {
-    bool use_names = false;
-    if (argc > 1) {
-        use_names = true;
-    }
-    cout << "Starting...\n";
-    auto start = chrono::high_resolution_clock::now();
-
-    // For storage and fs efficiency
-    // static_cast<void>(system("rm *.interactions"));
-
-    // Getting all the expansion filenames
-    vector<string> filenames;  // Vector containing the isoform files names
+void get_filenames(const string path, vector<string> &filenames) {
     filenames.reserve(89000);  // Number of isoforms
     DIR *dir;
     struct dirent *entry;
-    if ((dir = opendir("./")) != nullptr) {
+    if ((dir = opendir(path.data())) != nullptr) {
         while ((entry = readdir(dir)) != nullptr) {
             string filename = entry->d_name;
             if (filename.find(".expansion") != string::npos) {
@@ -60,11 +47,30 @@ int main(int argc, char *argv[]) {
         cout << "No isoform file found\n";
         exit(EXIT_FAILURE);
     }
+}
 
-    // Replace TID with real names, also line ~96
+// Avoiding recurring function calls as much as possible for efficiency
+int main(int argc, char *argv[]) {
+    bool use_names = false;
+    if (argc > 1 && argv[1] == "-n") {
+        use_names = true;
+        cout << "Using names instead of TIDs\n";
+    }
+    cout << "Starting...\n";
+    auto start = chrono::high_resolution_clock::now();
+
+    // For storage and fs efficiency
+    // static_cast<void>(system("rm *.interactions"));
+
+    // Getting all the expansion filenames
+    vector<string> filenames;
+    get_filenames("./", filenames);
+
+    // Replace TID with real names
     map<string, string> dictionary;
-    if (use_names)
+    if (use_names) {
         get_dictionary("/storage/shared/fantom/tcode-gene.csv", dictionary);
+    }
 
     fstream isoform_file;
     string seed_transcript, leaf_transcript, frel, seed_gene, leaf_gene;
