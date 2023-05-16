@@ -1,6 +1,6 @@
 *.expansion
 *.interactions
-a.out
+*.out
 frequenciesDistribution.jpeg
 .RData
 .Rhistory
