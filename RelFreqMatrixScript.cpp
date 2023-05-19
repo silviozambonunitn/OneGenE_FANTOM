@@ -1,4 +1,5 @@
 #include <dirent.h>
+
 #include <chrono>
 #include <cstring>
 #include <fstream>
@@ -71,19 +72,20 @@ int main(int argc, char *argv[]) {
         get_dictionary("/storage/shared/fantom/tcode-gene.csv", dictionary);
     }
 
+    int n_tids_notfound = 0;
     fstream isoform_file;
     string seed_transcript, leaf_transcript, frel, seed_gene, leaf_gene;
     ofstream csv("/storage/shared/fantom/FANTOM_RelativeFrequencyMatrix.csv");
-    if(csv.fail()){
-        cout<<"Errore nell'apertura del file di output\n";
+    if (csv.fail()) {
+        cout << "Errore nell'apertura del file di output\n";
         exit(EXIT_FAILURE);
     }
     csv << "Seed;Leaf;RelativeFrequency\n";
 
     // Opening and parsing the files
-    string dir="/storage/shared/fantom/hs_all_results/";
+    string dir = "/storage/shared/fantom/hs_all_results/";
     for (string f : filenames) {
-        isoform_file.open(dir+f, ios::in);
+        isoform_file.open(dir + f, ios::in);
         if (isoform_file.fail()) {
             cout << "Errore nell'apertura delle isoforme\n";
             exit(EXIT_FAILURE);
@@ -109,9 +111,14 @@ int main(int argc, char *argv[]) {
                 getline(isoform_file, buffer, ',');                // Another dummy reading
                 getline(isoform_file, frel, ',');
                 if (use_names) {
-                    seed_gene = dictionary.at(seed_transcript);
-                    leaf_gene = dictionary.at(leaf_transcript);
-                    csv << seed_gene << ';' << leaf_gene << ';' << frel << '\n';
+                    try {
+                        seed_gene = dictionary.at(seed_transcript);
+                        leaf_gene = dictionary.at(leaf_transcript);
+                        csv << seed_gene << ';' << leaf_gene << ';' << frel << '\n';
+                    } catch (out_of_range ex) {
+                        cout << "The following transcript was not found in the TID->name file: " << seed_transcript;
+                        ++n_tids_notfound;
+                    }
                 } else {
                     csv << seed_transcript << ';' << leaf_transcript << ';' << frel << '\n';
                 }
@@ -134,6 +141,9 @@ int main(int argc, char *argv[]) {
     auto stop = chrono::high_resolution_clock::now();
     auto duration = chrono::duration_cast<chrono::milliseconds>(stop - start);
     cout << "Done! Running time " << duration.count() << " milliseconds\n";
+    if (n_tids_notfound > 0) {
+        cout << "Number of tids not found: " << n_tids_notfound;
+    }
 
     return EXIT_SUCCESS;
 }
