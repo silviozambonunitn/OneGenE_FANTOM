@@ -115,7 +115,7 @@ int main(int argc, char *argv[]) {
                         seed_gene = dictionary.at(seed_transcript);
                         leaf_gene = dictionary.at(leaf_transcript);
                         csv << seed_gene << ';' << leaf_gene << ';' << frel << '\n';
-                    } catch (out_of_range ex) {
+                    } catch (const out_of_range& e) {
                         cout << "The following transcript was not found in the TID->name file: " << seed_transcript;
                         ++n_tids_notfound;
                     }
