@@ -63,7 +63,7 @@ int main(int argc, char *argv[]) {
 
     // Getting all the expansion filenames
     vector<string> filenames;
-    get_filenames("./dataset/", filenames);
+    get_filenames("/storage/shared/fantom/hs_all_results/", filenames);
 
     // Replace TID with real names
     map<string, string> dictionary;
@@ -81,7 +81,7 @@ int main(int argc, char *argv[]) {
     csv << "Seed;Leaf;RelativeFrequency\n";
 
     // Opening and parsing the files
-    string dir="./dataset/";
+    string dir="/storage/shared/fantom/hs_all_results/";
     for (string f : filenames) {
         isoform_file.open(dir+f, ios::in);
         if (isoform_file.fail()) {
