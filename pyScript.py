@@ -2,7 +2,7 @@
 import csv
 import glob
 
-filenames = glob.glob("./*.expansion") #getting all the isoforms filenames
+filenames = glob.glob("/storage/shared/fantom/hs_all_results/*.expansion") #getting all the isoforms filenames
 
 #Opening the output file
 outputCsv = open("/storage/shared/fantom/FANTOM_RelativeFrequencyMatrix_PY.csv","wt")
