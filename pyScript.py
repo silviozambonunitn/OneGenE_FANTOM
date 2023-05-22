@@ -5,7 +5,7 @@ import glob
 filenames = glob.glob("./*.expansion") #getting all the isoforms filenames
 
 #Opening the output file
-outputCsv = open("FANTOM_RelativeFrequencyMatrix_PY.csv","wt")
+outputCsv = open("/storage/shared/fantom/FANTOM_RelativeFrequencyMatrix_PY.csv","wt")
 csvWriter = csv.writer(outputCsv, delimiter=";", lineterminator="\n")
 csvWriter.writerow(["Seed","Leaf","RelativeFrequency"])
 
