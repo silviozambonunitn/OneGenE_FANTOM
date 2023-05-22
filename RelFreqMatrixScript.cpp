@@ -4,14 +4,14 @@
 #include <cstring>
 #include <fstream>
 #include <iostream>
-#include <map>
+#include <unordered_map>
 #include <vector>
 
 using namespace std;
 
 #define N_ISOFORMS 88000
 
-void get_dictionary(const string path, map<string, string> &dictionary) {
+void get_dictionary(const string path, unordered_map<string, string> &dictionary) {
     ifstream file(path);
     if (file.fail()) {
         cout << "Error opening the TIDs-genenames file!\n";
@@ -67,7 +67,7 @@ int main(int argc, char *argv[]) {
     get_filenames("/storage/shared/fantom/hs_all_results/", filenames);
 
     // Replace TID with real names
-    map<string, string> dictionary;
+    unordered_map<string, string> dictionary;
     if (use_names) {
         get_dictionary("/storage/shared/fantom/tcode-gene.csv", dictionary);
     }
