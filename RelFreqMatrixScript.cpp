@@ -20,9 +20,12 @@ void get_dictionary(const string path, unordered_map<string, string> &dictionary
     string tid, name;
     while (!file.eof()) {
         getline(file, tid, '|');
-        getline(file, name, '|');
-        getline(file, name);  // Make sure it ends with the line
-        dictionary[tid] = name;
+        if (tid[0] != 'T') {
+            cout << tid << " does not start with T\n";
+        }
+        getline(file, name, '|');  // Dummy reading
+        getline(file, name);       // Make sure it ends with the line
+        dictionary.insert({tid,name});
     }
 }
 
@@ -56,11 +59,12 @@ int main(int argc, char *argv[]) {
         use_names = true;
         cout << "Using names instead of TIDs\n";
     }
+
+    // Opening error log
+    ofstream error_log("/storage/shared/fantom/error_log.txt");
+
     cout << "Starting...\n";
     auto start = chrono::high_resolution_clock::now();
-
-    // For storage and fs efficiency
-    // static_cast<void>(system("rm *.interactions"));
 
     // Getting all the expansion filenames
     vector<string> filenames;
@@ -69,6 +73,7 @@ int main(int argc, char *argv[]) {
     // Replace TID with real names
     unordered_map<string, string> dictionary;
     if (use_names) {
+        dictionary.reserve(N_ISOFORMS);
         get_dictionary("/storage/shared/fantom/tcode-gene.csv", dictionary);
     }
 
@@ -115,8 +120,8 @@ int main(int argc, char *argv[]) {
                         seed_gene = dictionary.at(seed_transcript);
                         leaf_gene = dictionary.at(leaf_transcript);
                         csv << seed_gene << ';' << leaf_gene << ';' << frel << '\n';
-                    } catch (const out_of_range& e) {
-                        cout << "The following transcript was not found in the TID->name file: " << seed_transcript;
+                    } catch (const out_of_range &e) {
+                        error_log << "The following transcript was not found in the TID->name file: " << seed_transcript << '\n';
                         ++n_tids_notfound;
                     }
                 } else {
@@ -127,15 +132,9 @@ int main(int argc, char *argv[]) {
             }
         }
         isoform_file.close();
-        /*
-        // Deleting the file after reading for fs efficiency, activate if needed
-        string s = "rm " + f;
-        if (system(s.c_str()) != 0) {
-            cout << "Error deleting the isoform file";
-        }
-        */
     }
     csv.close();
+    error_log.close();
 
     // Calculating the running time
     auto stop = chrono::high_resolution_clock::now();
