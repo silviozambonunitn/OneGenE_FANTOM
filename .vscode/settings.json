@@ -9,6 +9,7 @@
         "string": "cpp",
         "cstdio": "cpp",
         "iosfwd": "cpp",
-        "iostream": "cpp"
+        "iostream": "cpp",
+        "armadillo": "cpp"
     }
 }
