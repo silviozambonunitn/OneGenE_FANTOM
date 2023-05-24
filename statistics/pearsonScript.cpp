@@ -22,7 +22,6 @@ int main(int argc, char* argv[]) {
         getline(in, buffer);  // skip rest of the row
     }
 
-    string t1, t2;
     arma::mat samples;
     arma::field<string> header;
     samples.load(arma::csv_name("/home/silvio/Documents/OneGenE_FANTOM/hgnc_data_mat.csv", header, arma::csv_opts::trans));  // Loads transposed matrix
@@ -30,11 +29,10 @@ int main(int argc, char* argv[]) {
     for (int i = 0; i < samples.n_cols; i++) {
         for (int j = 0; j < samples.n_cols; j++) {
             if (i != j && (corMatrix.find(minmax(rownames.at(i), rownames.at(j))) == corMatrix.end())) {  // Not the same isoform and not yet calculated
-                corMatrix[minmax(t1, t2)] = arma::as_scalar(arma::cor(samples.col(i), samples.col(j)));
+                corMatrix[minmax(rownames.at(i), rownames.at(j))] = arma::as_scalar(arma::cor(samples.col(i), samples.col(j)));
             }
         }
     }
-    cout << header;
 
     // Calculating the running time
     auto stop = chrono::high_resolution_clock::now();
