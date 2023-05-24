@@ -42,7 +42,7 @@ void get_filenames(const string path, vector<string> &filenames) {
         }
         closedir(dir);
     } else {
-        cout << "Error opening directory";
+        cout << "Error opening directory\n";
         exit(EXIT_FAILURE);
     }
     filenames.shrink_to_fit();  // Useless?
