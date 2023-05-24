@@ -138,8 +138,8 @@ int main(int argc, char *argv[]) {
 
     // Calculating the running time
     auto stop = chrono::high_resolution_clock::now();
-    auto duration = chrono::duration_cast<chrono::milliseconds>(stop - start);
-    cout << "Done! Running time " << duration.count() << " milliseconds\n";
+    auto duration = chrono::duration_cast<chrono::minutes>(stop - start);
+    cout << "Done! Running time " << duration.count() << " minutes\n";
     if (n_tids_notfound > 0) {
         cout << "Number of tids not found: " << n_tids_notfound;
     }
