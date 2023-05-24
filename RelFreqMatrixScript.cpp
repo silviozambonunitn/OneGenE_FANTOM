@@ -25,7 +25,7 @@ void get_dictionary(const string path, unordered_map<string, string> &dictionary
         }
         getline(file, name, '|');  // Dummy reading
         getline(file, name);       // Make sure it ends with the line
-        dictionary.insert({tid,name});
+        dictionary.insert({tid, name});
     }
 }
 
@@ -68,7 +68,8 @@ int main(int argc, char *argv[]) {
 
     // Getting all the expansion filenames
     vector<string> filenames;
-    get_filenames("/storage/shared/fantom/hs_all_results/", filenames);
+    string dir = "/storage/shared/fantom/hs_ok/"; //Folder of the expansions
+    get_filenames(dir, filenames);
 
     // Replace TID with real names
     unordered_map<string, string> dictionary;
@@ -88,7 +89,6 @@ int main(int argc, char *argv[]) {
     csv << "Seed;Leaf;RelativeFrequency\n";
 
     // Opening and parsing the files
-    string dir = "/storage/shared/fantom/hs_all_results/";
     for (string f : filenames) {
         isoform_file.open(dir + f, ios::in);
         if (isoform_file.fail()) {
