@@ -1,7 +1,7 @@
 /*
 IMPORTANT:
 Compile using the flags for armadillo, lapack e blas
-g++ -Wall -O3 ./statistics/pearsonScript.cpp -larmadillo -llapack -lblas
+g++ -o PearsonScript.out -Wall -O3 ./statistics/pearsonScript.cpp -larmadillo -llapack -lblas
 */
 
 #include <armadillo>
