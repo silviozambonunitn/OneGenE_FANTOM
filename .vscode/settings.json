@@ -10,6 +10,7 @@
         "cstdio": "cpp",
         "iosfwd": "cpp",
         "iostream": "cpp",
-        "armadillo": "cpp"
+        "armadillo": "cpp",
+        "chrono": "cpp"
     }
 }
