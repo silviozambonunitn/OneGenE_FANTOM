@@ -1,4 +1,3 @@
-# library(data.table)
 # samples = fread(
 #   file = "/home/silvio/Documents/OneGenE_FANTOM/hgnc_data_mat.csv",
 #   sep = ',',
@@ -34,14 +33,18 @@
 #   col.names = FALSE
 # )
 
+library(data.table)
 matrix = fread(
   file = "/home/silvio/Documents/OneGenE_FANTOM/pearsonMatrix2.csv",
   sep = ',',
   header = FALSE
-  #,data.table = F
 )
 
 library(ggplot2)
 ggplot() + geom_density(aes(matrix[, 3])) + geom_vline(aes(xintercept = mean(matrix[, 3])),
                                                        color = "blue",
                                                        size = 1)
+ggsave("pearsonPlot.png", plot1, width = 7, height = 5, units = "in", dpi = 300, device = "png")
+stats=matrix[,summary(V3)] #change V3 to correct index
+
+
