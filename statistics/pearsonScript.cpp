@@ -1,3 +1,9 @@
+/*
+IMPORTANT:
+Compile using the flags for armadillo, lapack e blas
+g++ -Wall -O3 ./statistics/pearsonScript.cpp -larmadillo -llapack -lblas
+*/
+
 #include <armadillo>
 #include <boost/functional/hash.hpp>
 #include <fstream>
