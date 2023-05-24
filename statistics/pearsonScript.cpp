@@ -22,7 +22,7 @@ int main(int argc, char* argv[]) {
     vector<string> rownames;
     rownames.reserve(88000);
     string buffer;
-    ifstream in("/home/silvio/Documents/OneGenE_FANTOM/hgnc_data_mat.csv");
+    ifstream in("/storage/shared/fantom/hgnc_data_mat.csv");
     getline(in, buffer);  // skipping header
     while (getline(in, buffer, ',')) {
         rownames.push_back(buffer);
@@ -32,7 +32,7 @@ int main(int argc, char* argv[]) {
 
     arma::mat samples;
     arma::field<string> header;
-    samples.load(arma::csv_name("/home/silvio/Documents/OneGenE_FANTOM/hgnc_data_mat.csv",
+    samples.load(arma::csv_name("/storage/shared/fantom/hgnc_data_mat.csv",
                                 header,
                                 arma::csv_opts::trans));  // Loads transposed matrix
     samples.shed_row(0);                                  // Deleting the names, actually just 0s
@@ -45,7 +45,7 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    ofstream out("/home/silvio/Documents/OneGenE_FANTOM/pearsonMatrix2.csv");
+    ofstream out("/storage/shared/fantom/pearsonMatrix2.csv");
     for (auto x : corMatrix) {
         out << x.first.first << ',' << x.first.second << ',' << x.second << '\n';
     }
