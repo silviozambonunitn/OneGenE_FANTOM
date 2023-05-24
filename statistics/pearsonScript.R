@@ -1,4 +1,3 @@
-library(readxl)
 # library(data.table)
 # samples = fread(
 #   file = "/home/silvio/Documents/OneGenE_FANTOM/hgnc_data_mat.csv",

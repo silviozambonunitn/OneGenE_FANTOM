@@ -1,6 +1,5 @@
 library(ggplot2)
 library(data.table)
-library(readxl)
 
 #opening and parsing csv matrix file
 setwd(here::here())
