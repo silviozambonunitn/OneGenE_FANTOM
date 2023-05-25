@@ -36,20 +36,27 @@ int main(int argc, char* argv[]) {
                                 header,
                                 arma::csv_opts::trans));  // Loads transposed matrix
     samples.shed_row(0);                                  // Deleting the names, actually just 0s
-
+    ofstream out("/storage/shared/fantom/pearsonMatrix2.csv");
+#pragma omp parallel for schedule(dynamic)
     for (arma::uword i = 0; i < samples.n_cols; i++) {
         for (arma::uword j = 0; j < samples.n_cols; j++) {
+            /*
             if (i != j && (corMatrix.find(minmax(rownames.at(i), rownames.at(j))) == corMatrix.end())) {  // Not the same isoform and not yet calculated
                 corMatrix[minmax(rownames.at(i), rownames.at(j))] = arma::as_scalar(arma::cor(samples.col(i), samples.col(j)));
             }
+            */
+            auto p = arma::as_scalar(arma::cor(samples.col(i), samples.col(j)));
+            out << rownames.at(i) << ',' << rownames.at(j) << p;
         }
     }
+    out.close();
 
-    ofstream out("/storage/shared/fantom/pearsonMatrix2.csv");
+    /*ofstream out("/storage/shared/fantom/pearsonMatrix2.csv");
     for (auto x : corMatrix) {
         out << x.first.first << ',' << x.first.second << ',' << x.second << '\n';
     }
     out.close();
+    */
 
     // Calculating the running time
     auto stop = chrono::high_resolution_clock::now();
