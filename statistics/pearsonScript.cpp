@@ -1,7 +1,7 @@
 /*
 IMPORTANT:
 Compile using the flags for armadillo, lapack e blas
-g++ -o PearsonScript.out -Wall -O3 ./statistics/pearsonScript.cpp -larmadillo -llapack -lblas
+g++ -Wall -O3 -o pearson.out pearsonScript.cpp -larmadillo -llapack -lblas -fopenmp
 */
 
 #include <armadillo>
@@ -46,7 +46,7 @@ int main(int argc, char* argv[]) {
             }
             */
             auto p = arma::as_scalar(arma::cor(samples.col(i), samples.col(j)));
-            out << rownames.at(i) << ',' << rownames.at(j) << p;
+            out << rownames.at(i) << ',' << rownames.at(j) << p << '\n';
         }
     }
     out.close();
