@@ -6,21 +6,24 @@ samples = fread(
   data.table = F
 )
 rownames(samples) = samples$V1 #Setting the rownames from the first column
-samples = samples[,-1] #Deleting the first column
+samples = samples[, -1] #Deleting the first column
 rotated = t(samples) #To rotate the matrix, might delete now if not for efficiency of iteration
 rm(samples)
+rotated = rotated[, 1:200]
 library(HiClimR)
-output = fastCor(
+matrix = fastCor(
   rotated,
   upperTri = TRUE,
   optBLAS = TRUE,
   verbose = TRUE,
-  nSplit = 1
+  nSplit = 10
 )
-csvout = na.omit(as.data.frame(as.table(output)))
+matrix = na.omit(as.data.frame(as.table(matrix)))
+
+print(summary(matrix[, 3]))
 
 fwrite(
-  csvout,
+  matrix,
   file = "/storage/shared/fantom/FANTOM_PearsonMatrix2.csv",
   eol = '\n',
   quote = FALSE,
@@ -29,20 +32,18 @@ fwrite(
 )
 
 library(ggplot2)
-plot1 = ggplot() +
-  geom_density(aes(csvout[, 3])) +
-  geom_vline(aes(xintercept = mean(csvout[, 3])),
-             color = "blue",
-             size = 1)
+ggplot() +
+  theme_bw() +
+  geom_density(aes(matrix[, 3])) +
+  geom_vline(aes(xintercept = mean(matrix[, 3])),
+             color = "blue") +
+  labs(x = "Pearson correlation coefficient", y = "Density", title = "Distribution", caption = "Blue line = mean")
 
 ggsave(
-  path = "/storage/shared/fantom/",
-  filename = "pearsonPlot.png",
-  plot1,
+  filename = "pearsonDistr.png",
   width = 7,
   height = 5,
   units = "in",
   dpi = 300,
   device = "png"
 )
-stats = csvout[, summary(Freq)]
