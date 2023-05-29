@@ -36,7 +36,6 @@ int main(int argc, char* argv[]) {
                                 header,
                                 arma::csv_opts::trans));  // Loads transposed matrix
     samples.shed_row(0);                                  // Deleting the names, actually just 0s
-    ofstream out("/storage/shared/fantom/pearsonMatrix2.csv");
     vector<string> res;
     res.reserve(7744000000);
 #pragma omp parallel for schedule(dynamic)
@@ -52,7 +51,6 @@ int main(int argc, char* argv[]) {
             res.push_back(s);
         }
     }
-    out.close();
 
     /*ofstream out("/storage/shared/fantom/pearsonMatrix2.csv");
     for (auto x : corMatrix) {
