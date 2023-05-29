@@ -1,6 +1,6 @@
 library(data.table)
 samples = fread(
-  file = "/storage/shared/fantom/hgnc_data_mat.csv",
+  file = "/home/silvio/onegene/hgnc_data_mat.csv",
   sep = ',',
   header = TRUE,
   data.table = F
@@ -18,7 +18,8 @@ matrix = fastCor(
   verbose = TRUE,
   nSplit = 10
 )
-matrix = na.omit(as.data.frame(as.table(matrix)))
+matrix = as.data.frame(as.table(matrix))
+matrix=matrix[complete.cases(matrix),]
 
 print(summary(matrix[, 3]))
 
