@@ -47,7 +47,7 @@ int main(int argc, char* argv[]) {
             }
             */
             auto p = arma::cor(samples.col(i), samples.col(j)).max();  // Must double check
-            string s = rownames.at(i) + ',' + rownames.at(j) + ',' + to_string(p) + '\n';
+            const string s = rownames.at(i) + ',' + rownames.at(j) + ',' + to_string(p) + '\n';
             res.push_back(s);
         }
     }
