@@ -63,6 +63,7 @@ int main(int argc, char* argv[]) {
     for (string s : res) {
         out << s;
     }
+    out.close();
 
     // Calculating the running time
     auto stop = chrono::high_resolution_clock::now();
