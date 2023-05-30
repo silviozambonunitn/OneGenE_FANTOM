@@ -16,6 +16,7 @@ matrix = fastCor(
   rotated,
   optBLAS = TRUE,
   verbose = TRUE,
+  upperTri = TRUE,
   nSplit = 40
 )
 matrix = as.data.frame(as.table(matrix))
@@ -25,7 +26,7 @@ print(summary(matrix[, 3]))
 
 fwrite(
   matrix,
-  file = "/storage/shared/fantom/FANTOM_PearsonMatrixR.csv",
+  file = "/storage/shared/fantom/FANTOM_PearsonMatrixR_tri.csv",
   eol = '\n',
   quote = FALSE,
   row.names = FALSE,
