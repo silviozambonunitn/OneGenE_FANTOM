@@ -9,7 +9,7 @@ rownames(samples) = samples$V1 #Setting the rownames from the first column
 samples = samples[, -1] #Deleting the first column
 rotated = t(samples) #To rotate the matrix, might delete now if not for efficiency of iteration
 rm(samples)
-rotated = rotated[, 1:200]
+#rotated = rotated[, 1:200]
 
 library(HiClimR)
 matrix = fastCor(
