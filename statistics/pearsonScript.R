@@ -9,7 +9,7 @@ rownames(samples) = samples$V1 #Setting the rownames from the first column
 samples = samples[, -1] #Deleting the first column
 rotated = t(samples) #To rotate the matrix, might delete now if not for efficiency of iteration
 rm(samples)
-#rotated = rotated[, 1:20000]
+rotated = rotated[, 1:200]
 
 library(HiClimR)
 matrix = fastCor(
@@ -19,7 +19,9 @@ matrix = fastCor(
   upperTri = TRUE,
   nSplit = 40
 )
-matrix = as.data.frame(as.table(matrix))
+
+library(reshape2)
+matrix=setNames(melt(matrix), c('Transcript1', 'Transcript2', 'PearsonCoeff'))
 matrix=matrix[complete.cases(matrix),]
 
 print(summary(matrix[, 3]))
