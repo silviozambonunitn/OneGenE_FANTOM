@@ -32,8 +32,7 @@ fwrite(
   matrix,
   file = "/storage/shared/fantom/FANTOM_PearsonMatrixR_tri.csv",
   eol = '\n',
-  quote = FALSE,
-  na = "NA"#,
+  quote = FALSE#,
   #row.names = FALSE,
   #col.names = FALSE
 )
