@@ -22,9 +22,9 @@ matrix = fastCor(
 
 #library(reshape2)
 #matrix=setNames(melt(matrix), c('Transcript1', 'Transcript2', 'PearsonCoeff'))
-matrix = as.data.table(melt(as.matrix(matrix)))
-setnames(matrix, c('Transcript1', 'Transcript2', 'PearsonCoeff'))
-matrix=matrix[complete.cases(matrix),]
+#matrix = melt(as.data.table(as.matrix(matrix)))
+#setnames(matrix, c('Transcript1', 'Transcript2', 'PearsonCoeff'))
+#matrix=matrix[complete.cases(matrix),]
 
 print(summary(matrix[, 3]))
 
@@ -33,8 +33,9 @@ fwrite(
   file = "/storage/shared/fantom/FANTOM_PearsonMatrixR_tri.csv",
   eol = '\n',
   quote = FALSE,
-  row.names = FALSE,
-  col.names = FALSE
+  na = "NA"#,
+  #row.names = FALSE,
+  #col.names = FALSE
 )
 
 library(ggplot2)
