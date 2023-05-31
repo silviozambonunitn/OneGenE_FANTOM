@@ -42,27 +42,15 @@ int main(int argc, char* argv[]) {
 #pragma omp parallel for schedule(dynamic)
     for (arma::uword i = 0; i < samples.n_cols; i++) {
         for (arma::uword j = 0; j < samples.n_cols; j++) {
-            /*
             if (i != j && (corMatrix.find(minmax(rownames.at(i), rownames.at(j))) == corMatrix.end())) {  // Not the same isoform and not yet calculated
                 corMatrix[minmax(rownames.at(i), rownames.at(j))] = arma::as_scalar(arma::cor(samples.col(i), samples.col(j)));
             }
-            */
-            auto p = arma::cor(samples.col(i), samples.col(j)).max();  // Must double check
-            const string s = rownames.at(i) + ',' + rownames.at(j) + ',' + to_string(p) + '\n';
-            res.push_back(s);
         }
     }
 
-    /*ofstream out("/storage/shared/fantom/pearsonMatrix2.csv");
+    ofstream out("/storage/shared/fantom/pearsonMatrix2.csv");
     for (auto x : corMatrix) {
         out << x.first.first << ',' << x.first.second << ',' << x.second << '\n';
-    }
-    out.close();
-    */
-
-    ofstream out("/storage/shared/fantom/pearsonMatrix2.csv");
-    for (string s : res) {
-        out << s;
     }
     out.close();
 
