@@ -20,8 +20,10 @@ matrix = fastCor(
   nSplit = 40
 )
 
-library(reshape2)
-matrix=setNames(melt(matrix), c('Transcript1', 'Transcript2', 'PearsonCoeff'))
+#library(reshape2)
+#matrix=setNames(melt(matrix), c('Transcript1', 'Transcript2', 'PearsonCoeff'))
+matrix = as.data.table(melt(as.matrix(matrix)))
+setnames(matrix, c('Transcript1', 'Transcript2', 'PearsonCoeff'))
 matrix=matrix[complete.cases(matrix),]
 
 print(summary(matrix[, 3]))
