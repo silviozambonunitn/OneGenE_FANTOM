@@ -17,6 +17,7 @@ int main(int argc, char* argv[]) {
     cout << "Starting...\n";
     auto start = chrono::high_resolution_clock::now();
     unordered_map<pair<string, string>, float, boost::hash<pair<string, string>>> corMatrix;
+    corMatrix.reserve(88000);
 
     // Getting all tids names
     vector<string> rownames;
@@ -30,15 +31,12 @@ int main(int argc, char* argv[]) {
     }
     in.close();
 
-    arma::mat m;
+    arma::mat samples;
     arma::field<string> header;
-    m.load(arma::csv_name("/storage/shared/fantom/hgnc_data_mat.csv",
+    samples.load(arma::csv_name("/storage/shared/fantom/hgnc_data_mat.csv",
                           header,
                           arma::csv_opts::trans));  // Loads transposed matrix
-    m.shed_row(0);                                  // Deleting the names, actually just 0s
-    auto samples = m.cols(0, 20);
-    vector<string> res;
-    res.reserve(7744000000);
+    samples.shed_row(0);                                  // Deleting the names, actually just 0s
 #pragma omp parallel for schedule(dynamic)
     for (arma::uword i = 0; i < samples.n_cols; i++) {
         for (arma::uword j = 0; j < samples.n_cols; j++) {
