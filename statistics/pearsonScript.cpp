@@ -37,10 +37,11 @@ int main(int argc, char* argv[]) {
                           header,
                           arma::csv_opts::trans));  // Loads transposed matrix
     samples.shed_row(0);                                  // Deleting the names, actually just 0s
-#pragma omp parallel for schedule(dynamic)
+//#pragma omp parallel for schedule(dynamic)
     for (arma::uword i = 0; i < samples.n_cols; i++) {
         for (arma::uword j = 0; j < samples.n_cols; j++) {
             if (i != j && (corMatrix.find(minmax(rownames.at(i), rownames.at(j))) == corMatrix.end())) {  // Not the same isoform and not yet calculated
+                //#pragma omp critical
                 corMatrix[minmax(rownames.at(i), rownames.at(j))] = arma::as_scalar(arma::cor(samples.col(i), samples.col(j)));
             }
         }
