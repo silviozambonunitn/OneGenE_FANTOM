@@ -30,12 +30,13 @@ int main(int argc, char* argv[]) {
     }
     in.close();
 
-    arma::mat samples;
+    arma::mat m;
     arma::field<string> header;
-    samples.load(arma::csv_name("/storage/shared/fantom/hgnc_data_mat.csv",
-                                header,
-                                arma::csv_opts::trans));  // Loads transposed matrix
-    samples.shed_row(0);                                  // Deleting the names, actually just 0s
+    m.load(arma::csv_name("/storage/shared/fantom/hgnc_data_mat.csv",
+                          header,
+                          arma::csv_opts::trans));  // Loads transposed matrix
+    m.shed_row(0);                                  // Deleting the names, actually just 0s
+    auto samples = m.cols(0, 20);
     vector<string> res;
     res.reserve(7744000000);
 #pragma omp parallel for schedule(dynamic)
