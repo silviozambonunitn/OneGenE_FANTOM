@@ -24,6 +24,10 @@ int main(int argc, char* argv[]) {
     rownames.reserve(88000);
     string buffer;
     ifstream in("/storage/shared/fantom/hgnc_data_mat.csv");
+    if (in.fail()) {
+        cout << "Errore nell'apertura del file!\n";
+        exit(EXIT_FAILURE);
+    }
     getline(in, buffer);  // skipping header
     while (getline(in, buffer, ',')) {
         rownames.push_back(buffer);
@@ -34,24 +38,28 @@ int main(int argc, char* argv[]) {
     arma::mat samples;
     arma::field<string> header;
     samples.load(arma::csv_name("/storage/shared/fantom/hgnc_data_mat.csv",
-                          header,
-                          arma::csv_opts::trans));  // Loads transposed matrix
+                                header,
+                                arma::csv_opts::trans));  // Loads transposed matrix
     samples.shed_row(0);                                  // Deleting the names, actually just 0s
-//#pragma omp parallel for schedule(dynamic)
-    for (arma::uword i = 0; i < samples.n_cols; i++) {
+    arma::mat cor = arma::cor(samples);
+    ofstream o("/storage/shared/fantom/cor.csv");
+    cor.save(o, arma::coord_ascii);
+    o.close();
+    // #pragma omp parallel for schedule(dynamic)
+    /*for (arma::uword i = 0; i < samples.n_cols; i++) {
         for (arma::uword j = 0; j < samples.n_cols; j++) {
             if (i != j && (corMatrix.find(minmax(rownames.at(i), rownames.at(j))) == corMatrix.end())) {  // Not the same isoform and not yet calculated
-                //#pragma omp critical
+                // #pragma omp critical
                 corMatrix[minmax(rownames.at(i), rownames.at(j))] = arma::as_scalar(arma::cor(samples.col(i), samples.col(j)));
             }
         }
-    }
+    }*/
 
-    ofstream out("/storage/shared/fantom/pearsonMatrix2.csv");
+    /*ofstream out("/storage/shared/fantom/pearsonMatrix2.csv");
     for (auto x : corMatrix) {
         out << x.first.first << ',' << x.first.second << ',' << x.second << '\n';
     }
-    out.close();
+    out.close();*/
 
     // Calculating the running time
     auto stop = chrono::high_resolution_clock::now();
