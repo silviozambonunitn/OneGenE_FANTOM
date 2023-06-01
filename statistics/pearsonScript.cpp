@@ -1,7 +1,9 @@
 /*
 IMPORTANT:
-Compile using the flags for armadillo, lapack e blas
+Compile using the flags for armadillo, lapack e blas:
 g++ -Wall -O3 -o pearson.out pearsonScript.cpp -larmadillo -llapack -lblas -fopenmp
+Produces a Coordinates List formatted matrix
+This version outputs a 270 GB csv file, run only there's enough space
 */
 
 #include <armadillo>
@@ -48,21 +50,6 @@ int main(int argc, char* argv[]) {
     cor.save(o, arma::coord_ascii);
     o.close();
     cout<<"Done saving the matrix\n";
-    // #pragma omp parallel for schedule(dynamic)
-    /*for (arma::uword i = 0; i < samples.n_cols; i++) {
-        for (arma::uword j = 0; j < samples.n_cols; j++) {
-            if (i != j && (corMatrix.find(minmax(rownames.at(i), rownames.at(j))) == corMatrix.end())) {  // Not the same isoform and not yet calculated
-                // #pragma omp critical
-                corMatrix[minmax(rownames.at(i), rownames.at(j))] = arma::as_scalar(arma::cor(samples.col(i), samples.col(j)));
-            }
-        }
-    }*/
-
-    /*ofstream out("/storage/shared/fantom/pearsonMatrix2.csv");
-    for (auto x : corMatrix) {
-        out << x.first.first << ',' << x.first.second << ',' << x.second << '\n';
-    }
-    out.close();*/
 
     // Calculating the running time
     auto stop = chrono::high_resolution_clock::now();
