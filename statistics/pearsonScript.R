@@ -6,10 +6,10 @@ samples = fread(
   data.table = F
 )
 rownames(samples) = samples$V1 #Setting the rownames from the first column
-samples = samples[, -1] #Deleting the first column
+samples = samples[,-1] #Deleting the first column
 rotated = t(samples) #To rotate the matrix, might delete now if not for efficiency of iteration
 rm(samples)
-#rotated = rotated[, 1:200]
+rotated = rotated[, 1:200]
 
 library(HiClimR)
 matrix = fastCor(
@@ -17,34 +17,41 @@ matrix = fastCor(
   optBLAS = TRUE,
   verbose = TRUE,
   upperTri = TRUE,
-  nSplit = 40
+  nSplit = 35
 )
 
+#This causes an internal integer overflow
 #library(reshape2)
 #matrix=setNames(melt(matrix), c('Transcript1', 'Transcript2', 'PearsonCoeff'))
 #matrix = melt(as.data.table(as.matrix(matrix)))
 #setnames(matrix, c('Transcript1', 'Transcript2', 'PearsonCoeff'))
 #matrix=matrix[complete.cases(matrix),]
 
-print(summary(matrix[, 3]))
+fwrite(matrix,
+       file = "/storage/shared/fantom/FANTOM_PearsonMatrixR_tri.csv",
+       eol = '\n',
+       quote = FALSE)
 
-fwrite(
-  matrix,
-  file = "/storage/shared/fantom/FANTOM_PearsonMatrixR_tri.csv",
-  eol = '\n',
-  quote = FALSE#,
-  #row.names = FALSE,
-  #col.names = FALSE
-)
+vectorized = c(matrix[-1, ])
+rm(matrix)
+gc()
+vectorized = na.omit(vectorized)
+
+print(summary(vectorized))
 
 library(ggplot2)
 ggplot() +
   theme_bw() +
-  geom_density(aes(matrix[, 3])) +
-  geom_vline(aes(xintercept = mean(matrix[, 3])),
+  geom_density(aes(vectorized)) +
+  geom_vline(aes(xintercept = mean(vectorized)),
              color = "blue") +
-  labs(x = "Pearson correlation coefficient", y = "Density", title = "Distribution", caption = "Blue line = mean")+
-  scale_x_continuous(breaks = seq(-0.75,1,0.25))
+  labs(
+    x = "Pearson correlation coefficient",
+    y = "Density",
+    title = "Distribution",
+    caption = "Blue line = mean"
+  ) +
+  scale_x_continuous(breaks = seq(-0.75, 1, 0.25))
 
 ggsave(
   filename = "pearsonDistr.png",
