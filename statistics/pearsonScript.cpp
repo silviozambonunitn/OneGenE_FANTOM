@@ -1,9 +1,10 @@
 /*
 IMPORTANT:
-Compile using the flags for armadillo, lapack e blas:
-g++ -Wall -O3 -o pearson.out pearsonScript.cpp -larmadillo -llapack -lblas -fopenmp
+[DEPRECATED]
 Produces a Coordinates List formatted matrix
 This version outputs a 270 GB csv file, run only there's enough space
+Compile using the flags for armadillo, lapack e blas:
+g++ -Wall -O3 -o pearson.out pearsonScript.cpp -larmadillo -llapack -lblas -fopenmp
 */
 
 #include <armadillo>
@@ -43,13 +44,13 @@ int main(int argc, char* argv[]) {
                                 header,
                                 arma::csv_opts::trans));  // Loads transposed matrix
     samples.shed_row(0);                                  // Deleting the names, actually just 0s
-    cout<<"Done loading the matrix\n";
+    cout << "Done loading the matrix\n";
     arma::mat cor = arma::cor(samples);
-    cout<<"Done calculating the cor\n";
+    cout << "Done calculating the cor\n";
     ofstream o("/storage/shared/fantom/cor.csv");
     cor.save(o, arma::coord_ascii);
     o.close();
-    cout<<"Done saving the matrix\n";
+    cout << "Done saving the matrix\n";
 
     // Calculating the running time
     auto stop = chrono::high_resolution_clock::now();
