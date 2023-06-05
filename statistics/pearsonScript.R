@@ -20,13 +20,6 @@ matrix = fastCor(
   nSplit = 35
 )
 
-#This causes an internal integer overflow
-#library(reshape2)
-#matrix=setNames(melt(matrix), c('Transcript1', 'Transcript2', 'PearsonCoeff'))
-#matrix = melt(as.data.table(as.matrix(matrix)))
-#setnames(matrix, c('Transcript1', 'Transcript2', 'PearsonCoeff'))
-#matrix=matrix[complete.cases(matrix),]
-
 fwrite(matrix,
        file = "/storage/shared/fantom/FANTOM_PearsonMatrixR_tri.csv",
        eol = '\n',
@@ -35,9 +28,15 @@ fwrite(matrix,
 vectorized = c(matrix[-1, ])
 rm(matrix)
 gc()
-vectorized = na.omit(vectorized)
 
+vectorized = na.omit(vectorized)
+gc()
+
+length(vectorized)
 print(summary(vectorized))
+
+#To save the vector
+saveRDS(vectorized, file = "/storage/shared/fantom/corrvector.rds")
 
 library(ggplot2)
 ggplot() +
@@ -53,7 +52,9 @@ ggplot() +
   ) +
   scale_x_continuous(breaks = seq(-0.75, 1, 0.25))
 
+#To save the plot
 ggsave(
+  path = "/storage/shared/fantom/",
   filename = "pearsonDistr.png",
   width = 7,
   height = 5,
@@ -61,3 +62,16 @@ ggsave(
   dpi = 300,
   device = "png"
 )
+
+#To lad the vector
+v = readRDS("/storage/shared/fantom/corrvector.rds")
+#To plot in two lines
+library(ggplot2)
+ggplot() +
+  theme_bw() +
+  geom_density(aes(v[c(T, F)])) +
+  geom_density(aes(v[c(F, T)])) +
+  labs(x = "Pearson correlation coefficient",
+       y = "Density",
+       title = "Distribution") +
+  scale_x_continuous(breaks = seq(-0.75, 1, 0.25))
