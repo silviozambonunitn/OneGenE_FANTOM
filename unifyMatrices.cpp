@@ -7,6 +7,10 @@
 using namespace std;
 
 int main(int argc, char* argv[]) {
+
+    cout << "Starting...\n";
+    auto start = chrono::high_resolution_clock::now();
+
     ifstream relFreqFile("/storage/shared/fantom/FANTOM_RelativeFrequencyMatrix.csv");
     ofstream out("/storage/shared/fantom/FANTOM_unified.csv");
 
@@ -55,5 +59,11 @@ int main(int argc, char* argv[]) {
 
     relFreqFile.close();
     out.close();
+
+    // Calculating the running time
+    auto stop = chrono::high_resolution_clock::now();
+    auto duration = chrono::duration_cast<chrono::minutes>(stop - start);
+    cout << "Done! Running time " << duration.count() << " minutes\n";
+
     return EXIT_SUCCESS;
 }
