@@ -16,12 +16,14 @@ int main(int argc, char* argv[]) {
         cout << "Error opening the file!\n";
         exit(EXIT_FAILURE);
     }
+    cout << "Opened the streams\n";
 
     // Loading the matrix
     arma::mat pearson;
     arma::field<string> names;
-    cout << "Loading the matrix... ";
-    if (pearson.load(arma::csv_name("/storage/shared/fantom/FANTOM_PearsonMatrix_triangular.csv", names)) == false) {
+    cout << "Loading the matrix... \n";
+    bool check = pearson.load(arma::csv_name("/storage/shared/fantom/FANTOM_PearsonMatrix_triangular.csv", names));
+    if (check == false) {
         cout << "Error loading the matrix!\n";
         exit(EXIT_FAILURE);
     }
