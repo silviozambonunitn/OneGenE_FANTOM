@@ -13,12 +13,19 @@ int main(int argc, char* argv[]) {
 
     ifstream relFreqFile("/storage/shared/fantom/FANTOM_RelativeFrequencyMatrix.csv");
     ofstream out("/storage/shared/fantom/FANTOM_unified.csv");
+    if(relFreqFile.fail()||out.fail()){
+        cout<<"Error opening the file!\n";
+        exit(EXIT_FAILURE);
+    }
 
     // Loading the matrix
     arma::mat pearson;
     arma::field<string> names;
     cout << "Loading the matrix... ";
-    pearson.load(arma::csv_name("/storage/shared/fantom/FANTOM_PearsonMatrix_triangular.csv", names));
+    if(pearson.load(arma::csv_name("/storage/shared/fantom/FANTOM_PearsonMatrix_triangular.csv", names))==false){
+        cout<<"Error loading the matrix!\n";
+        exit(EXIT_FAILURE);
+    }
     pearson.shed_row(0);
     cout << "Done!\n";
 
