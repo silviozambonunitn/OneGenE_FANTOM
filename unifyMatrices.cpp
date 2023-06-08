@@ -2,6 +2,7 @@
 #include <fstream>
 #include <iostream>
 #include <unordered_map>
+#include <cmath> //To overload abs()
 
 using namespace std;
 
@@ -46,7 +47,7 @@ int main(int argc, int* argv[]) {
                 cout << "This is strange: a gene interacting with itself was found: " << posx << '&' << posy << endl;
                 exit(EXIT_FAILURE);
             }
-            out << fixed << ';' << coeff << (stod(freq) - coeff) << '\n';
+            out << fixed << ';' << coeff << (stod(freq) - abs(coeff)) << '\n';
         } else {
             guard = false;
         }
