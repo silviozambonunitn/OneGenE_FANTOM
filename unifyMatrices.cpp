@@ -6,7 +6,7 @@
 
 using namespace std;
 
-int main(int argc, int* argv[]) {
+int main(int argc, char* argv[]) {
     ifstream relFreqFile("/storage/shared/fantom/FANTOM_RelativeFrequencyMatrix.csv");
     ofstream out("/storage/shared/fantom/FANTOM_unified.csv");
 
