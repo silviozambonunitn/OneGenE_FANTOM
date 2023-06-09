@@ -43,7 +43,6 @@ int main(int argc, char* argv[]) {
     samples.load(arma::csv_name("/storage/shared/fantom/hgnc_data_mat.csv",
                                 header,
                                 arma::csv_opts::trans));  // Loads transposed matrix
-    samples.shed_row(0);                                  // Deleting the names, actually just 0s
     cout << "Done loading the matrix\n";
 
     arma::mat cor = arma::cor(samples);
