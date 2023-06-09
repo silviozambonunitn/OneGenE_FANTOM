@@ -16,8 +16,8 @@ int main(int argc, char* argv[]) {
     cout << "Starting...\n";
     auto start = chrono::high_resolution_clock::now();
 
-    ifstream relFreqFile("p.csv");
-    ofstream unifiedMatrix("FANTOM_unified.csv");
+    ifstream relFreqFile("/storage/shared/fantom/FANTOM_RelativeFrequencyMatrix.csv");
+    ofstream unifiedMatrix("/storage/shared/fantom/FANTOM_unified.csv");
     if (relFreqFile.fail() || unifiedMatrix.fail()) {
         cout << "Error opening the file!\n";
         exit(EXIT_FAILURE);
@@ -28,12 +28,11 @@ int main(int argc, char* argv[]) {
     arma::mat pearson;
     arma::field<string> names;
     cout << "Loading the matrix... ";
-    bool check = pearson.load(arma::csv_name("m.csv", names));
+    bool check = pearson.load(arma::csv_name("/storage/shared/fantom/FANTOM_PearsonMatrix_triangular.csv", names));
     if (check == false) {
         cout << "Error loading the matrix!\n";
         exit(EXIT_FAILURE);
     }
-    // pearson.shed_row(0);
     cout << "Done!\n";
 
     unordered_map<string, int> dict;
