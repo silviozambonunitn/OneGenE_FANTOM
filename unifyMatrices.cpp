@@ -1,3 +1,9 @@
+/*
+IMPORTANT: INPUT FILES SEEMS TO NEED AN EMPTY NEWLINE AT THE END TO DON'T LOSE DATA.
+NEEDS CHECKING
+COMPILE USING g++ -Wall -O3 unifyMatrices.cpp -larmadillo -fopenmp
+*/
+
 #include <armadillo>
 #include <cmath>  //To overload abs()
 #include <fstream>
@@ -10,8 +16,8 @@ int main(int argc, char* argv[]) {
     cout << "Starting...\n";
     auto start = chrono::high_resolution_clock::now();
 
-    ifstream relFreqFile("/storage/shared/fantom/FANTOM_RelativeFrequencyMatrix.csv");
-    ofstream unifiedMatrix("/storage/shared/fantom/FANTOM_unified.csv");
+    ifstream relFreqFile("p.csv");
+    ofstream unifiedMatrix("FANTOM_unified.csv");
     if (relFreqFile.fail() || unifiedMatrix.fail()) {
         cout << "Error opening the file!\n";
         exit(EXIT_FAILURE);
@@ -21,13 +27,13 @@ int main(int argc, char* argv[]) {
     // Loading the matrix
     arma::mat pearson;
     arma::field<string> names;
-    cout << "Loading the matrix... \n";
-    bool check = pearson.load(arma::csv_name("/storage/shared/fantom/FANTOM_PearsonMatrix_triangular.csv", names));
+    cout << "Loading the matrix... ";
+    bool check = pearson.load(arma::csv_name("m.csv", names));
     if (check == false) {
         cout << "Error loading the matrix!\n";
         exit(EXIT_FAILURE);
     }
-    pearson.shed_row(0);
+    // pearson.shed_row(0);
     cout << "Done!\n";
 
     unordered_map<string, int> dict;
@@ -40,7 +46,7 @@ int main(int argc, char* argv[]) {
 
     string t1, t2, freq;
     getline(relFreqFile, t1);  // Reading the header
-    unifiedMatrix << "Seed;Leaf;RelativeFrequency;PearsonCorrelation;relfreq-|pearson|";
+    unifiedMatrix << "Seed;Leaf;RelativeFrequency;PearsonCorrelation;relfreq-|pearson|\n";
     bool guard = true;
     while (guard) {
         getline(relFreqFile, t1, ';');
@@ -48,18 +54,34 @@ int main(int argc, char* argv[]) {
         getline(relFreqFile, freq, '\n');
         if (!relFreqFile.eof()) {
             unifiedMatrix << t1 << ';' << t2 << ';' << freq;
-            int posx = dict.at(t1);
-            int posy = dict.at(t2);
+            int posx, posy;
+            try {
+                posx = dict.at(t1);
+                posy = dict.at(t2);
+            } catch (const out_of_range& e) {
+                cout << "Not found " << t1 << "or" << t2 << " in the dict" << endl;
+                exit(1);
+            }
             double coeff;
             if (posx > posy) {
-                coeff = pearson(posx, posy);
+                try {
+                    coeff = pearson(posx, posy);
+                } catch (const out_of_range& e) {
+                    cout << "Error in arma matrix range " << posx << ',' << posy << endl;
+                    exit(1);
+                }
             } else if (posy > posx) {
-                coeff = pearson(posy, posx);
+                try {
+                    coeff = pearson(posy, posx);
+                } catch (const out_of_range& e) {
+                    cout << "Error in arma matrix range " << posx << ',' << posy << endl;
+                    exit(1);
+                }
             } else {
-                cout << "This is strange: a gene interacting with itself was found: " << posx << '&' << posy << endl;
+                cout << "This is strange: a gene interacting with itself was found: " << t1 << '&' << t2 << endl;
                 exit(EXIT_FAILURE);
             }
-            unifiedMatrix << fixed << ';' << coeff << (stod(freq) - abs(coeff)) << '\n';
+            unifiedMatrix << fixed << ';' << coeff << ';' << (stod(freq) - abs(coeff)) << '\n';
         } else {
             guard = false;
         }
