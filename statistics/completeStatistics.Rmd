@@ -1,0 +1,30 @@
+---
+title: "FANTOM OneGenE"
+output: html_notebook
+---
+Descriptive statistics for the FANTOM OneGenE output data
+
+```{r}
+library(data.table)
+matrix = fread(
+  file = "/home/silvio/onegene/FANTOM_unified.csv",
+  sep = ';',
+  header = TRUE,
+  verbose = F
+)
+library(ggplot2)
+plot = ggplot() +
+  theme_bw() +
+  geom_density(aes(matrix$PearsonCorrelation)) +
+  geom_vline(aes(xintercept = mean(matrix$PearsonCorrelation)),
+             color = "blue")
+plot = plot + labs(
+  x = "Pearson correlation coefficient",
+  y = "Density",
+  title = "Transcripts with relative frequency > 0",
+  caption = "Blue line = mean"
+) +
+  scale_x_continuous(breaks = seq(-0.75, 1, 0.1))
+plot
+```
+
