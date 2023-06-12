@@ -4,6 +4,7 @@ output: html_notebook
 ---
 Descriptive statistics for the FANTOM OneGenE output data
 
+Loading the matrix
 ```{r}
 library(data.table)
 matrix = fread(
@@ -12,6 +13,10 @@ matrix = fread(
   header = TRUE,
   verbose = F
 )
+```
+
+Correlation distribution
+```{r}
 library(ggplot2)
 plot = ggplot() +
   theme_bw() +
@@ -27,4 +32,22 @@ plot = plot + labs(
   scale_x_continuous(breaks = seq(-0.75, 1, 0.1))
 plot
 ```
+
+Scatterplot of relative freq and correlation
+```{r}
+library(ggplot2)
+ggplot(matrix, aes(x = RelativeFrequency, y = PearsonCorrelation)) +
+  geom_point() +
+  theme_bw()
+ggsave(
+  path = "/storage/shared/fantom/",
+  filename = "scatter_no_abs.png",
+  width = 7,
+  height = 5,
+  units = "in",
+  dpi = 300,
+  device = "png"
+)
+```
+
 
