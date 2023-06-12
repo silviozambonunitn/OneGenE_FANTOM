@@ -6,3 +6,4 @@ frequenciesDistribution.jpeg
 .Rhistory
 *.csv
 r_anno.txt
+*.parquet
