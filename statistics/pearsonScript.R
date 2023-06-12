@@ -9,6 +9,7 @@ rownames(samples) = samples$V1 #Setting the rownames from the first column
 samples = samples[,-1] #Deleting the first column
 rotated = t(samples) #To rotate the matrix, might delete now if not for efficiency of iteration
 rm(samples)
+gc(verbose = F)
 #rotated = rotated[, 1:200]
 
 library(HiClimR)
@@ -27,16 +28,16 @@ fwrite(matrix,
 
 vectorized = c(matrix[-1, ])
 rm(matrix)
-gc()
+gc(verbose = F)
 
 vectorized = na.omit(vectorized)
-gc()
+gc(verbose = F)
 
 length(vectorized)
 print(summary(vectorized))
 
 #To save the vector
-saveRDS(vectorized, file = "/storage/shared/fantom/corrvector.rds")
+#saveRDS(vectorized, file = "/storage/shared/fantom/corrvector.rds")
 
 library(ggplot2)
 ggplot() +
