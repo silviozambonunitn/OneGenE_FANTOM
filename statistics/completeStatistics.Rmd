@@ -8,9 +8,9 @@ Loading the matrix
 ```{r}
 library(data.table)
 matrix = fread(
-  file = "/home/silvio/onegene/FANTOM_unified.csv",
+  file = "/storage/shared/fantom/FANTOM_unified.csv",
   sep = ';',
-  header = TRUE,
+  header = T,
   verbose = F
 )
 ```
@@ -35,19 +35,37 @@ plot
 
 Scatterplot of relative freq and correlation
 ```{r}
-library(ggplot2)
-ggplot(matrix, aes(x = RelativeFrequency, y = PearsonCorrelation)) +
-  geom_point() +
-  theme_bw()
-ggsave(
-  path = "/storage/shared/fantom/",
-  filename = "scatter_no_abs.png",
-  width = 7,
-  height = 5,
-  units = "in",
-  dpi = 300,
-  device = "png"
+library(scattermore)
+scattermoreplot(
+  matrix$RelativeFrequency,
+  matrix$PearsonCorrelation
 )
+# ggsave(
+#   path = "/storage/shared/fantom/",
+#   filename = "scatter_no_abs.png",
+#   width = 7,
+#   height = 5,
+#   units = "in",
+#   dpi = 300,
+#   device = "png"
+# )
+```
+Scatterplot of relative freq and absolute value of correlation
+```{r}
+library(scattermore)
+scattermoreplot(
+  matrix$RelativeFrequency,
+  abs(matrix$PearsonCorrelation)
+)
+# ggsave(
+#   path = "/storage/shared/fantom/",
+#   filename = "scatter_no_abs.png",
+#   width = 7,
+#   height = 5,
+#   units = "in",
+#   dpi = 300,
+#   device = "png"
+# )
 ```
 
 
