@@ -7,3 +7,4 @@ frequenciesDistribution.jpeg
 *.csv
 r_anno.txt
 *.parquet
+statistics/completeStatistics.nb.html
