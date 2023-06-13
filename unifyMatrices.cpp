@@ -33,7 +33,7 @@ int main(int argc, char* argv[]) {
         cout << "Error loading the matrix!\n";
         exit(EXIT_FAILURE);
     }
-    cout << "Done!\n";
+    cout << "Done!\n" << flush;
 
     unordered_map<string, int> dict;
     dict.reserve(88000);
