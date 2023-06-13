@@ -36,9 +36,7 @@ gc(verbose = F)
 length(vectorized)
 print(summary(vectorized))
 
-#To save the vector
-#saveRDS(vectorized, file = "/storage/shared/fantom/corrvector.rds")
-
+#Don't plot the full matrix!
 library(ggplot2)
 ggplot() +
   theme_bw() +
@@ -63,16 +61,3 @@ ggsave(
   dpi = 300,
   device = "png"
 )
-
-#To lad the vector
-v = readRDS("/storage/shared/fantom/corrvector.rds")
-#To plot in two lines
-library(ggplot2)
-ggplot() +
-  theme_bw() +
-  geom_density(aes(v[c(T, F)])) +
-  geom_density(aes(v[c(F, T)])) +
-  labs(x = "Pearson correlation coefficient",
-       y = "Density",
-       title = "Distribution") +
-  scale_x_continuous(breaks = seq(-0.75, 1, 0.25))
