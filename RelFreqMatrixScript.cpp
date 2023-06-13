@@ -18,19 +18,18 @@ void get_dictionary(const string path, unordered_map<string, string> &dictionary
         exit(EXIT_FAILURE);
     }
     string tid, name;
-    while (!file.eof()) {
-        getline(file, tid, '|');
+    while (getline(file, tid, '|')) {
         if (tid[0] != 'T') {
             cout << tid << " does not start with T\n";
         }
         getline(file, name, '|');  // Dummy reading
         getline(file, name);       // Make sure it ends with the line
-        dictionary.insert({tid, name});
+        dictionary.emplace(tid, name);
     }
 }
 
 void get_filenames(const string path, vector<string> &filenames) {
-    filenames.reserve(89000);  // Number of isoforms
+    filenames.reserve(N_ISOFORMS);
     DIR *dir;
     struct dirent *entry;
     if ((dir = opendir(path.data())) != nullptr) {
@@ -45,7 +44,6 @@ void get_filenames(const string path, vector<string> &filenames) {
         cout << "Error opening directory\n";
         exit(EXIT_FAILURE);
     }
-    filenames.shrink_to_fit();  // Useless?
     if (filenames.empty()) {
         cout << "No isoform file found\n";
         exit(EXIT_FAILURE);
@@ -68,7 +66,7 @@ int main(int argc, char *argv[]) {
 
     // Getting all the expansion filenames
     vector<string> filenames;
-    string dir = "/storage/shared/fantom/hs_ok/"; //Folder of the expansions
+    string dir = "/storage/shared/fantom/hs.FANTOM/";  // Folder of the expansions
     get_filenames(dir, filenames);
 
     // Replace TID with real names
@@ -121,7 +119,8 @@ int main(int argc, char *argv[]) {
                         leaf_gene = dictionary.at(leaf_transcript);
                         csv << seed_gene << ';' << leaf_gene << ';' << frel << '\n';
                     } catch (const out_of_range &e) {
-                        error_log << "The following transcript was not found in the TID->name file: " << seed_transcript << '\n';
+                        error_log << "The following transcripts were not found in the TID->name file: "
+                                  << seed_transcript << ' ' << leaf_transcript << '\n';
                         ++n_tids_notfound;
                     }
                 } else {
