@@ -2,7 +2,7 @@
 IMPORTANT:
 [DEPRECATED]
 Produces a Coordinates List formatted matrix
-This version outputs a 270 GB csv file, run only there's enough space
+This version outputs a 270 GB csv file, run only if there's enough space
 Compile using the flags for armadillo, lapack e blas:
 g++ -Wall -O3 -o pearson.out pearsonScript.cpp -larmadillo -llapack -lblas -fopenmp
 */
