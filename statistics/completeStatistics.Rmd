@@ -4,15 +4,34 @@ output: html_notebook
 ---
 Descriptive statistics for the FANTOM OneGenE output data
 
-Loading the matrix
+Loading the matrix and printing stats
 ```{r}
 library(data.table)
 matrix = fread(
-  file = "/storage/shared/fantom/FANTOM_unified.csv",
+  file = "/home/silvio/onegene/FANTOM_unified.csv",
   sep = ';',
   header = T,
   verbose = F
 )
+min(abs(matrix$PearsonCorrelation))
+summary(matrix$PearsonCorrelation)
+cor(abs(matrix$PearsonCorrelation), matrix$RelativeFrequency)
+cor((matrix$PearsonCorrelation), matrix$RelativeFrequency)
+summary((matrix$`relfreq-|pearson|`))
+```
+Plotting the relative frequencies
+```{r}
+summary(matrix$RelativeFrequency)
+
+library(ggplot2)
+ggplot(matrix, aes(x = RelativeFrequency)) + #Vedere se va il riferimento alla colonna
+  scale_x_continuous(breaks = seq(0, 1, 0.05)) +
+  geom_histogram(bins = 50) +
+  theme_bw() +
+  labs(title = "Relative frequencies distribution",
+       x = "Relative frequency",
+       y = "Count")
+gc(verbose = F)
 ```
 
 Correlation distribution
@@ -21,6 +40,7 @@ library(ggplot2)
 plot = ggplot() +
   theme_bw() +
   geom_density(aes(matrix$PearsonCorrelation)) +
+  scale_x_continuous(breaks = seq(-0.75, 1, 0.1)) +
   geom_vline(aes(xintercept = mean(matrix$PearsonCorrelation)),
              color = "blue")
 plot = plot + labs(
@@ -28,11 +48,9 @@ plot = plot + labs(
   y = "Density",
   title = "Transcripts with relative frequency > 0",
   caption = "Blue line = mean"
-) +
-  scale_x_continuous(breaks = seq(-0.75, 1, 0.1))
+)
 plot
 ```
-
 Scatterplot of relative freq and correlation
 ```{r}
 library(scattermore)
@@ -40,32 +58,24 @@ scattermoreplot(
   matrix$RelativeFrequency,
   matrix$PearsonCorrelation
 )
-# ggsave(
-#   path = "/storage/shared/fantom/",
-#   filename = "scatter_no_abs.png",
-#   width = 7,
-#   height = 5,
-#   units = "in",
-#   dpi = 300,
-#   device = "png"
-# )
 ```
 Scatterplot of relative freq and absolute value of correlation
 ```{r}
-library(scattermore)
-scattermoreplot(
-  matrix$RelativeFrequency,
-  abs(matrix$PearsonCorrelation)
-)
-# ggsave(
-#   path = "/storage/shared/fantom/",
-#   filename = "scatter_no_abs.png",
-#   width = 7,
-#   height = 5,
-#   units = "in",
-#   dpi = 300,
-#   device = "png"
-# )
+ggplot(matrix, aes(x=RelativeFrequency, y=abs(PearsonCorrelation))) +
+  geom_density_2d()
 ```
-
+Number of expansions with corr>0.046
+```{r}
+count = nrow(matrix[matrix$PearsonCorrelation > 0.046,])
+```
+Loading pearson triangular matrix and counting corr>0.046
+```{r}
+library(data.table)
+matrix = fread(
+  file = "/home/silvio/onegene/FANTOM_unified.csv",
+  sep = ';',
+  header = T,
+  verbose = F
+)
+```
 
