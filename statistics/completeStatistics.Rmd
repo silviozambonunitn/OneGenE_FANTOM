@@ -24,12 +24,12 @@ summary(matrix$RelativeFrequency)
 library(ggplot2)
 ggplot(matrix, aes(x = RelativeFrequency)) + #Vedere se va il riferimento alla colonna
   scale_x_continuous(breaks = seq(0, 1, 0.05)) +
-  geom_histogram(bins = 50) +
+  geom_histogram(bins = 50, fill="#ff832f") +
   theme_minimal() +
   labs(title = "Relative frequencies distribution",
        x = "Relative frequency",
        y = "Count")
-gc(verbose = F)
+ggsave("relfreq.pdf", width = 4, height = 3)
 ```
 
 Correlation distribution
