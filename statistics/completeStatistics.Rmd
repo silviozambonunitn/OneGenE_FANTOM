@@ -91,18 +91,20 @@ library(tidyr)
 colnames(matrix)[3] = "Relative frequency"
 colnames(matrix)[4] = "Pearson correlation"
 colnames(matrix)[5] = "Rel freq - |corr|"
-prova = matrix %>% pivot_longer(3:5)
+prova = matrix[1:200000,] %>% pivot_longer(3:5)
 prova$name = factor(prova$name,
                     levels = c("Relative frequency", "Pearson correlation", "Rel freq - |corr|"))
 
-ggplot(prova, aes(name, value, color = name)) +
+ggplot(prova, aes(name, value,color=name, fill = name)) +
   scale_y_continuous(breaks = seq(-1, 1, 0.25)) +
-  geom_violin() +
-  geom_boxplot(width = 0.1) +
+  geom_violin(alpha = 0.8) +
+  geom_boxplot(width = 0.1, alpha = 0.3) +
   theme_minimal() +
-  scale_color_manual(values=c("#0f4d92", "#ff832f", "#a8bfd7"))+
+  scale_color_manual(values=c("#0c3c73", "#ff6600", "#85a5c7"))+
+  scale_fill_manual(values=c("#0f4d92", "#ff832f", "#a8bfd7"))+
   xlab("")+
   guides(color=F, fill=F)
+ggsave("violin.pdf", width = 4, height = 3)
 ```
 
 
