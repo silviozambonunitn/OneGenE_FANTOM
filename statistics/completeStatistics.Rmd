@@ -8,7 +8,7 @@ Loading the matrix and printing stats
 ```{r message=FALSE}
 library(data.table)
 matrix = fread(
-  file = "/home/silvio/onegene/FANTOM_unified.csv",
+  file = "/storage/shared/fantom/FANTOM_unified.csv",
   sep = ';',
   header = T,
   verbose = F
@@ -29,10 +29,9 @@ ggplot(matrix, aes(x = RelativeFrequency)) + #Vedere se va il riferimento alla c
   labs(title = "Relative frequencies distribution",
        x = "Relative frequency",
        y = "Count")
-ggsave("relfreq.pdf", width = 4, height = 3)
+ggsave("relfreq.png")
 ```
-
-Correlation distribution
+Correlation of the expansions distribution
 ```{r}
 library(ggplot2)
 plot = ggplot() +
@@ -47,7 +46,7 @@ plot = ggplot() +
     title = "Transcripts with relative frequency > 0",
     caption = "Blue line = mean"
   )
-plot
+ggsave("corrdistr.png")
 ```
 Scatterplot of relative freq and correlation
 ```{r}
@@ -82,7 +81,6 @@ matrix = fread(file = "/storage/shared/fantom/FANTOM_PearsonMatrix_triangular.cs
 matrix = abs(matrix)
 sum(matrix > 0.046, na.rm = T)
 ```
-
 Violin + box plots
 ```{r}
 library(ggplot2)
@@ -91,7 +89,7 @@ library(tidyr)
 colnames(matrix)[3] = "Relative frequency"
 colnames(matrix)[4] = "Pearson correlation"
 colnames(matrix)[5] = "Rel freq - |corr|"
-prova = matrix[1:200000,] %>% pivot_longer(3:5)
+prova = matrix %>% pivot_longer(3:5)
 prova$name = factor(prova$name,
                     levels = c("Relative frequency", "Pearson correlation", "Rel freq - |corr|"))
 
@@ -104,7 +102,7 @@ ggplot(prova, aes(name, value,color=name, fill = name)) +
   scale_fill_manual(values=c("#0f4d92", "#ff832f", "#a8bfd7"))+
   xlab("")+
   guides(color=F, fill=F)
-ggsave("violin.pdf", width = 4, height = 3)
+ggsave("violin.png")
 ```
 
 
