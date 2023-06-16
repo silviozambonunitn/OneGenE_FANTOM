@@ -5,7 +5,7 @@ output: html_notebook
 Descriptive statistics for the FANTOM OneGenE output data
 
 Loading the matrix and printing stats
-```{r}
+```{r message=FALSE}
 library(data.table)
 matrix = fread(
   file = "/home/silvio/onegene/FANTOM_unified.csv",
@@ -15,8 +15,6 @@ matrix = fread(
 )
 min(abs(matrix$PearsonCorrelation))
 summary(matrix$PearsonCorrelation)
-cor(abs(matrix$PearsonCorrelation), matrix$RelativeFrequency)
-cor((matrix$PearsonCorrelation), matrix$RelativeFrequency)
 summary((matrix$`relfreq-|pearson|`))
 ```
 Plotting the relative frequencies
@@ -27,7 +25,7 @@ library(ggplot2)
 ggplot(matrix, aes(x = RelativeFrequency)) + #Vedere se va il riferimento alla colonna
   scale_x_continuous(breaks = seq(0, 1, 0.05)) +
   geom_histogram(bins = 50) +
-  theme_bw() +
+  theme_minimal() +
   labs(title = "Relative frequencies distribution",
        x = "Relative frequency",
        y = "Count")
@@ -38,21 +36,23 @@ Correlation distribution
 ```{r}
 library(ggplot2)
 plot = ggplot() +
-  theme_bw() +
+  theme_minimal() +
   geom_density(aes(matrix$PearsonCorrelation)) +
   scale_x_continuous(breaks = seq(-0.75, 1, 0.1)) +
   geom_vline(aes(xintercept = mean(matrix$PearsonCorrelation)),
-             color = "blue")
-plot = plot + labs(
-  x = "Pearson correlation coefficient",
-  y = "Density",
-  title = "Transcripts with relative frequency > 0",
-  caption = "Blue line = mean"
-)
+             color = "#0f4d92") +
+  labs(
+    x = "Pearson correlation coefficient",
+    y = "Density",
+    title = "Transcripts with relative frequency > 0",
+    caption = "Blue line = mean"
+  )
 plot
 ```
 Scatterplot of relative freq and correlation
 ```{r}
+cor(matrix$PearsonCorrelation, matrix$RelativeFrequency)
+#Useless clutter
 library(scattermore)
 scattermoreplot(
   matrix$RelativeFrequency,
@@ -61,21 +61,49 @@ scattermoreplot(
 ```
 Scatterplot of relative freq and absolute value of correlation
 ```{r}
-ggplot(matrix, aes(x=RelativeFrequency, y=abs(PearsonCorrelation))) +
+#Does not work
+cor(abs(matrix$PearsonCorrelation), matrix$RelativeFrequency)
+
+ggplot(matrix, aes(x=PearsonCorrelation, y=RelativeFrequency) ) +
   geom_density_2d()
+
+# ggplot(matrix, aes(x=RelativeFrequency, y=abs(PearsonCorrelation))) +
+#   stat_density_2d(aes(fill = ..level..), geom = "polygon", colour="white")
 ```
 Number of expansions with corr>0.046
 ```{r}
-count = nrow(matrix[matrix$PearsonCorrelation > 0.046,])
+nrow(matrix[abs(matrix$PearsonCorrelation) > 0.046,])
 ```
 Loading pearson triangular matrix and counting corr>0.046
 ```{r}
+#Exec on server because the matrix is 80 GB
 library(data.table)
-matrix = fread(
-  file = "/home/silvio/onegene/FANTOM_unified.csv",
-  sep = ';',
-  header = T,
-  verbose = F
-)
+matrix = fread(file = "/storage/shared/fantom/FANTOM_PearsonMatrix_triangular.csv", sep = ',', header = T, verbose = F)
+matrix = abs(matrix)
+sum(matrix > 0.046, na.rm = T)
 ```
+
+Violin + box plots
+```{r}
+library(ggplot2)
+library(tidyr)
+
+colnames(matrix)[3] = "Relative frequency"
+colnames(matrix)[4] = "Pearson correlation"
+colnames(matrix)[5] = "Rel freq - |corr|"
+prova = matrix %>% pivot_longer(3:5)
+prova$name = factor(prova$name,
+                    levels = c("Relative frequency", "Pearson correlation", "Rel freq - |corr|"))
+
+ggplot(prova, aes(name, value, color = name)) +
+  scale_y_continuous(breaks = seq(-1, 1, 0.25)) +
+  geom_violin() +
+  geom_boxplot(width = 0.1) +
+  theme_minimal() +
+  scale_color_manual(values=c("#0f4d92", "#ff832f", "#a8bfd7"))+
+  xlab("")+
+  guides(color=F, fill=F)
+```
+
+
 
