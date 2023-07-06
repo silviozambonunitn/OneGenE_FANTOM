@@ -4,3 +4,5 @@ Repository of my internship in the RDDS lab of the University of Trento. This in
 Toma Tebaldi, Enrico Blanzieri
 ### What is this about?
 This is a collection of scripts and tools I've created during my internship working on the OneGenE project, specifically on the Human dataset FANTOM
+### Presentation link
+https://docs.google.com/presentation/d/e/2PACX-1vRRGmdHTO1623mfyHyaCnAc_RAhkhVlyBtmDy2LZeXfgSYerl9jU4mB3Anv7SECCU9K_EFuxSrarkrD/pub?start=false&loop=false&delayms=60000
