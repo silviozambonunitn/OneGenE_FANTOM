@@ -4,6 +4,7 @@
 #include <cstring>
 #include <fstream>
 #include <iostream>
+#include <sstream>
 #include <unordered_map>
 #include <vector>
 
@@ -43,7 +44,6 @@ int main(int argc, char *argv[]) {
     string dir = "./vitis/";  // Folder of the expansions
     get_filenames(dir, filenames);
 
-    int n_tids_notfound = 0;
     fstream isoform_file;
     string seed_transcript, leaf_transcript, frel, seed_gene, leaf_gene;
     ofstream csv("VITIS_RelativeFrequencyMatrix.csv");
@@ -64,26 +64,23 @@ int main(int argc, char *argv[]) {
         for (int i = 0; i < 3; i++) {
             getline(isoform_file, seed_transcript, ',');
         }
-        getline(isoform_file, seed_transcript, '\n');
+        getline(isoform_file, seed_transcript);
 
         // Skipping the first two rows
         string buffer;
         getline(isoform_file, buffer);  // Deleting the header
         bool guard = true;
         while (guard) {
-            // Getting the second isoform name
             getline(isoform_file, buffer, ',');  // Skipping rank
-            getline(isoform_file, buffer, ',');
-            if (!isoform_file.eof()) {  // Control for the last row
+            getline(isoform_file, buffer, ',');  // Getting the second isoform name
+            if (!isoform_file.eof()) {           // Control for the last row
                 leaf_transcript = buffer;
                 getline(isoform_file, buffer, ',');  // Another dummy reading
-                //If has multiple names, therefore the rest of the line is missing
-                if (leaf_transcript.find("<br>") != string::npos) {
-                    getline(isoform_file, frel); //Read to the end of the line
-                } else {
-                    getline(isoform_file, frel, ',');
-                    // Skipping rest of line 
-                    getline(isoform_file, buffer);
+                getline(isoform_file, frel);         // Read to the end of the line
+                // Only way to avoid problems with rows with less cols than normal
+                if (frel.find(',') != string::npos) {  // Others cols do exist
+                    stringstream ss(frel);             // Dividi
+                    getline(ss, frel, ',');
                 }
                 csv << seed_transcript << ';' << leaf_transcript << ';' << frel << '\n';
             } else {
@@ -98,9 +95,6 @@ int main(int argc, char *argv[]) {
     auto stop = chrono::high_resolution_clock::now();
     auto duration = chrono::duration_cast<chrono::minutes>(stop - start);
     cout << "Done! Running time " << duration.count() << " minutes\n";
-    if (n_tids_notfound > 0) {
-        cout << "Number of tids not found: " << n_tids_notfound;
-    }
 
     return EXIT_SUCCESS;
 }
