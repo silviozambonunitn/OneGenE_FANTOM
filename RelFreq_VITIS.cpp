@@ -9,24 +9,7 @@
 
 using namespace std;
 
-#define N_ISOFORMS 88000
-
-void get_dictionary(const string path, unordered_map<string, string> &dictionary) {
-    ifstream file(path);
-    if (file.fail()) {
-        cout << "Error opening the TIDs-genenames file!\n";
-        exit(EXIT_FAILURE);
-    }
-    string tid, name;
-    while (getline(file, tid, '|')) {
-        if (tid[0] != 'T') {
-            cout << tid << " does not start with T\n";
-        }
-        getline(file, name, '|');  // Dummy reading
-        getline(file, name);       // Make sure it ends with the line
-        dictionary.emplace(tid, name);
-    }
-}
+#define N_ISOFORMS 28013
 
 void get_filenames(const string path, vector<string> &filenames) {
     filenames.reserve(N_ISOFORMS);
@@ -35,7 +18,7 @@ void get_filenames(const string path, vector<string> &filenames) {
     if ((dir = opendir(path.data())) != nullptr) {
         while ((entry = readdir(dir)) != nullptr) {
             string filename = entry->d_name;
-            if (filename.find(".expansion") != string::npos) {
+            if (filename.find(".exp.csv") != string::npos) {
                 filenames.push_back(filename);
             }
         }
@@ -52,34 +35,18 @@ void get_filenames(const string path, vector<string> &filenames) {
 
 // Avoiding recurring function calls as much as possible for efficiency
 int main(int argc, char *argv[]) {
-    bool use_names = false;
-    if (argc > 1) {
-        use_names = true;
-        cout << "Using names instead of TIDs\n";
-    }
-
-    // Opening error log
-    ofstream error_log("/storage/shared/fantom/error_log.txt");
-
     cout << "Starting...\n";
     auto start = chrono::high_resolution_clock::now();
 
     // Getting all the expansion filenames
     vector<string> filenames;
-    string dir = "/storage/shared/fantom/hs.FANTOM/";  // Folder of the expansions
+    string dir = "./vitis/";  // Folder of the expansions
     get_filenames(dir, filenames);
-
-    // Replace TID with real names
-    unordered_map<string, string> dictionary;
-    if (use_names) {
-        dictionary.reserve(N_ISOFORMS);
-        get_dictionary("/storage/shared/fantom/tcode-gene.csv", dictionary);
-    }
 
     int n_tids_notfound = 0;
     fstream isoform_file;
     string seed_transcript, leaf_transcript, frel, seed_gene, leaf_gene;
-    ofstream csv("/storage/shared/fantom/FANTOM_RelativeFrequencyMatrix.csv");
+    ofstream csv("VITIS_RelativeFrequencyMatrix.csv");
     if (csv.fail()) {
         cout << "Errore nell'apertura del file di output\n";
         exit(EXIT_FAILURE);
@@ -93,39 +60,32 @@ int main(int argc, char *argv[]) {
             cout << "Errore nell'apertura delle isoforme\n";
             exit(EXIT_FAILURE);
         }
-        // Extracting the isoform id
-        for (int i = 0; i < 3; i++)
-            isoform_file >> seed_transcript;
-        isoform_file.get();                           // To skip blank space
-        getline(isoform_file, seed_transcript, '-');  // To get the transcript id from the TID-GeneName string
+        // Extracting the gene id
+        for (int i = 0; i < 3; i++) {
+            getline(isoform_file, seed_transcript, ',');
+        }
+        getline(isoform_file, seed_transcript, '\n');
 
         // Skipping the first two rows
         string buffer;
-        getline(isoform_file, buffer);  // Deleting isoform details
-        getline(isoform_file, buffer);  // Deleting the header (rank,node,Fabs,Frel,Class)
+        getline(isoform_file, buffer);  // Deleting the header
         bool guard = true;
         while (guard) {
             // Getting the second isoform name
-            getline(isoform_file, buffer, ',');
+            getline(isoform_file, buffer, ',');  // Skipping rank
             getline(isoform_file, buffer, ',');
             if (!isoform_file.eof()) {  // Control for the last row
                 leaf_transcript = buffer;
-                leaf_transcript[0] = toupper(leaf_transcript[0]);  // For coherence with the other isoform id
-                getline(isoform_file, buffer, ',');                // Another dummy reading
-                getline(isoform_file, frel, ',');
-                if (use_names) {
-                    try {
-                        seed_gene = dictionary.at(seed_transcript);
-                        leaf_gene = dictionary.at(leaf_transcript);
-                        csv << seed_gene << ';' << leaf_gene << ';' << frel << '\n';
-                    } catch (const out_of_range &e) {
-                        error_log << "The following transcripts were not found in the TID->name file: "
-                                  << seed_transcript << ' ' << leaf_transcript << '\n';
-                        ++n_tids_notfound;
-                    }
+                getline(isoform_file, buffer, ',');  // Another dummy reading
+                //If has multiple names, therefore the rest of the line is missing
+                if (leaf_transcript.find("<br>") != string::npos) {
+                    getline(isoform_file, frel); //Read to the end of the line
                 } else {
-                    csv << seed_transcript << ';' << leaf_transcript << ';' << frel << '\n';
+                    getline(isoform_file, frel, ',');
+                    // Skipping rest of line 
+                    getline(isoform_file, buffer);
                 }
+                csv << seed_transcript << ';' << leaf_transcript << ';' << frel << '\n';
             } else {
                 guard = false;
             }
@@ -133,7 +93,6 @@ int main(int argc, char *argv[]) {
         isoform_file.close();
     }
     csv.close();
-    error_log.close();
 
     // Calculating the running time
     auto stop = chrono::high_resolution_clock::now();
