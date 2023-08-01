@@ -79,7 +79,7 @@ int main(int argc, char *argv[]) {
                 getline(isoform_file, frel);         // Read to the end of the line
                 // Only way to avoid problems with rows with less cols than normal
                 if (frel.find(',') != string::npos) {  // Others cols do exist
-                    stringstream ss(frel);             // Dividi
+                    stringstream ss(frel);             // Ignore the other cols
                     getline(ss, frel, ',');
                 }
                 csv << seed_transcript << ';' << leaf_transcript << ';' << frel << '\n';
