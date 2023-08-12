@@ -9,4 +9,4 @@ df_matrix = pd.read_csv('/storage/shared/fantom/FANTOM_unified.csv', delimiter='
 
 # Apply the dictionary to the matrix and write to the output file
 df_matrix[[0, 1]] = df_matrix[[0, 1]].applymap(df_dict.get)
-df_matrix.to_csv("/storage/shared/fantom/FANTOM_RelativeFrequencyMatrix_names.csv", sep=";", header=['Seed;Leaf;RelativeFrequency;PearsonCorrelation;relfreq-|pearson|'], index=False)
+df_matrix.to_csv("/storage/shared/fantom/FANTOM_Matrix_names.csv", sep=";", header=['Seed', 'Leaf', 'RelativeFrequency', 'PearsonCorrelation', 'relfreq-|pearson|'], index=False)
