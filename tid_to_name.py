@@ -1,7 +1,8 @@
 import pandas as pd
 
 # Read the dictionary file
-df_dict = pd.read_csv('/storage/shared/fantom/tcode-gene.csv', delimiter='|', header=None, index_col=0, squeeze=True).to_dict()
+df_dict = pd.read_csv('/storage/shared/fantom/tcode-gene.csv', delimiter='|', header=None, index_col=0).to_dict()
+df_dict = df_dict.squeeze().to_dict()
 
 # Read the matrix file
 df_matrix = pd.read_csv('/storage/shared/fantom/FANTOM_unified.csv', delimiter=';', skiprows=1, header=None)
