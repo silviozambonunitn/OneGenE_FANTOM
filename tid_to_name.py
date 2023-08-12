@@ -1,15 +1,15 @@
 import csv
 
 #output file
-outputCsv = open("FANTOM_RelativeFrequencyMatrix_names.csv","wt")
+outputCsv = open("/storage/shared/fantom/FANTOM_RelativeFrequencyMatrix_names.csv","wt")
 csvWriter = csv.writer(outputCsv, delimiter=";", lineterminator="\n")
 csvWriter.writerow(['Seed;Leaf;RelativeFrequency;PearsonCorrelation;relfreq-|pearson|'])
 
 #dictionary
-with open('tcode-gene.csv', mode='r') as dictFile:
+with open('/storage/shared/fantom/tcode-gene.csv', mode='r') as dictFile:
     readerDict = csv.reader(dictFile, delimiter='|')
     mydict = {rows[0]:rows[2] for rows in readerDict}
-    with open('FANTOM_unified.csv', mode='r') as matrixFile:
+    with open('/storage/shared/fantom/FANTOM_unified.csv', mode='r') as matrixFile:
         readerMatrix = csv.reader(matrixFile, delimiter=';')
         next(readerMatrix, None) #Skipping header? Must check
         for r in readerMatrix:
