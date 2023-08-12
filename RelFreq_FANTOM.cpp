@@ -52,10 +52,14 @@ void get_filenames(const string path, vector<string> &filenames) {
 
 // Avoiding recurring function calls as much as possible for efficiency
 int main(int argc, char *argv[]) {
+    // Checks whether to use names instead of tids
     bool use_names = false;
+    unordered_map<string, string> dictionary;
     if (argc > 1) {
         use_names = true;
         cout << "Using names instead of TIDs\n";
+        dictionary.reserve(N_ISOFORMS);
+        get_dictionary("/storage/shared/fantom/tcode-gene.csv", dictionary);
     }
 
     // Opening error log
@@ -69,17 +73,10 @@ int main(int argc, char *argv[]) {
     string dir = "/storage/shared/fantom/hs.FANTOM/";  // Folder of the expansions
     get_filenames(dir, filenames);
 
-    // Replace TID with real names
-    unordered_map<string, string> dictionary;
-    if (use_names) {
-        dictionary.reserve(N_ISOFORMS);
-        get_dictionary("/storage/shared/fantom/tcode-gene.csv", dictionary);
-    }
-
     int n_tids_notfound = 0;
     fstream isoform_file;
     string seed_transcript, leaf_transcript, frel, seed_gene, leaf_gene;
-    ofstream csv("/storage/shared/fantom/FANTOM_RelativeFrequencyMatrix.csv");
+    ofstream csv("/storage/shared/fantom/FANTOM_RelativeFrequencyMatrix_tid.csv");
     if (csv.fail()) {
         cout << "Errore nell'apertura del file di output\n";
         exit(EXIT_FAILURE);
