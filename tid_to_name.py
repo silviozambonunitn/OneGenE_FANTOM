@@ -1,16 +1,11 @@
-import csv
+import pandas as pd
 
-#output file
-outputCsv = open("/storage/shared/fantom/FANTOM_RelativeFrequencyMatrix_names.csv","wt")
-csvWriter = csv.writer(outputCsv, delimiter=";", lineterminator="\n")
-csvWriter.writerow(['Seed;Leaf;RelativeFrequency;PearsonCorrelation;relfreq-|pearson|'])
+# Read the dictionary file
+df_dict = pd.read_csv('/storage/shared/fantom/tcode-gene.csv', delimiter='|', header=None, index_col=0, squeeze=True).to_dict()
 
-#dictionary
-with open('/storage/shared/fantom/tcode-gene.csv', mode='r') as dictFile:
-    readerDict = csv.reader(dictFile, delimiter='|')
-    mydict = {rows[0]:rows[2] for rows in readerDict}
-    with open('/storage/shared/fantom/FANTOM_unified.csv', mode='r') as matrixFile:
-        readerMatrix = csv.reader(matrixFile, delimiter=';')
-        next(readerMatrix, None) #Skipping header? Must check
-        for r in readerMatrix:
-            csvWriter.writerow([mydict[r[0]], mydict[r[1]], r[2], r[3], r[4]])
+# Read the matrix file
+df_matrix = pd.read_csv('/storage/shared/fantom/FANTOM_unified.csv', delimiter=';', skiprows=1, header=None)
+
+# Apply the dictionary to the matrix and write to the output file
+df_matrix[[0, 1]] = df_matrix[[0, 1]].applymap(df_dict.get)
+df_matrix.to_csv("/storage/shared/fantom/FANTOM_RelativeFrequencyMatrix_names.csv", sep=";", header=['Seed;Leaf;RelativeFrequency;PearsonCorrelation;relfreq-|pearson|'], index=False)
