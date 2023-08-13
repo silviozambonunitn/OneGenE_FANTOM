@@ -1,3 +1,9 @@
+/*
+    This program creates the relative frequency matrix for the fantom dataset
+    starting from the expansion files resulting from the onegene project.
+    The matrix is stored in the coordinates format for storage efficiency
+*/
+
 #include <dirent.h>
 
 #include <chrono>
