@@ -52,6 +52,8 @@ void get_filenames(const string path, vector<string> &filenames) {
 
 // Avoiding recurring function calls as much as possible for efficiency
 int main(int argc, char *argv[]) {
+
+    /* Deprecated, use the python file tid_to_name.py
     // Checks whether to use names instead of tids
     bool use_names = false;
     unordered_map<string, string> dictionary;
@@ -64,6 +66,7 @@ int main(int argc, char *argv[]) {
 
     // Opening error log
     ofstream error_log("/storage/shared/fantom/error_log.txt");
+    */
 
     cout << "Starting...\n";
     auto start = chrono::high_resolution_clock::now();
@@ -73,10 +76,10 @@ int main(int argc, char *argv[]) {
     string dir = "/storage/shared/fantom/hs.FANTOM/";  // Folder of the expansions
     get_filenames(dir, filenames);
 
-    int n_tids_notfound = 0;
+    //int n_tids_notfound = 0;
     fstream isoform_file;
     string seed_transcript, leaf_transcript, frel, seed_gene, leaf_gene;
-    ofstream csv("/storage/shared/fantom/FANTOM_RelativeFrequencyMatrix_tid.csv");
+    ofstream csv("/storage/shared/fantom/FANTOM_RelativeFrequencyMatrix.csv");
     if (csv.fail()) {
         cout << "Errore nell'apertura del file di output\n";
         exit(EXIT_FAILURE);
@@ -110,7 +113,7 @@ int main(int argc, char *argv[]) {
                 leaf_transcript[0] = toupper(leaf_transcript[0]);  // For coherence with the other isoform id
                 getline(isoform_file, buffer, ',');                // Another dummy reading
                 getline(isoform_file, frel, ',');
-                if (use_names) {
+                /*if (use_names) {
                     try {
                         seed_gene = dictionary.at(seed_transcript);
                         leaf_gene = dictionary.at(leaf_transcript);
@@ -120,9 +123,9 @@ int main(int argc, char *argv[]) {
                                   << seed_transcript << ' ' << leaf_transcript << '\n';
                         ++n_tids_notfound;
                     }
-                } else {
+                } else {*/
                     csv << seed_transcript << ';' << leaf_transcript << ';' << frel << '\n';
-                }
+                //}
             } else {
                 guard = false;
             }
@@ -130,15 +133,19 @@ int main(int argc, char *argv[]) {
         isoform_file.close();
     }
     csv.close();
-    error_log.close();
+
+    //error_log.close();
 
     // Calculating the running time
     auto stop = chrono::high_resolution_clock::now();
     auto duration = chrono::duration_cast<chrono::minutes>(stop - start);
     cout << "Done! Running time " << duration.count() << " minutes\n";
+    
+    /*
     if (n_tids_notfound > 0) {
         cout << "Number of tids not found: " << n_tids_notfound;
     }
+    */
 
     return EXIT_SUCCESS;
 }
