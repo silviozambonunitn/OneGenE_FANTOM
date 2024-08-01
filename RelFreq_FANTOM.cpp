@@ -17,6 +17,7 @@ using namespace std;
 
 #define N_ISOFORMS 88000
 
+//
 void get_dictionary(const string path, unordered_map<string, string> &dictionary) {
     ifstream file(path);
     if (file.fail()) {
@@ -34,6 +35,7 @@ void get_dictionary(const string path, unordered_map<string, string> &dictionary
     }
 }
 
+// Prende tutti i nomi dei files .expansion nella directory indicata
 void get_filenames(const string path, vector<string> &filenames) {
     filenames.reserve(N_ISOFORMS);
     DIR *dir;
@@ -58,8 +60,8 @@ void get_filenames(const string path, vector<string> &filenames) {
 
 // Avoiding recurring function calls as much as possible for efficiency
 int main(int argc, char *argv[]) {
-
-    /* Deprecated, use the python file tid_to_name.py
+    /*
+    // Deprecated, use the python file tid_to_name.py
     // Checks whether to use names instead of tids
     bool use_names = false;
     unordered_map<string, string> dictionary;
@@ -70,7 +72,7 @@ int main(int argc, char *argv[]) {
         get_dictionary("/storage/shared/fantom/tcode-gene.csv", dictionary);
     }
 
-    // Opening error log
+    // Opening error log for debug
     ofstream error_log("/storage/shared/fantom/error_log.txt");
     */
 
@@ -82,7 +84,7 @@ int main(int argc, char *argv[]) {
     string dir = "/storage/shared/fantom/hs.FANTOM/";  // Folder of the expansions
     get_filenames(dir, filenames);
 
-    //int n_tids_notfound = 0;
+    // int n_tids_notfound = 0;
     fstream isoform_file;
     string seed_transcript, leaf_transcript, frel, seed_gene, leaf_gene;
     ofstream csv("/storage/shared/fantom/FANTOM_RelativeFrequencyMatrix.csv");
@@ -107,8 +109,8 @@ int main(int argc, char *argv[]) {
 
         // Skipping the first two rows
         string buffer;
-        getline(isoform_file, buffer);  // Deleting isoform details
-        getline(isoform_file, buffer);  // Deleting the header (rank,node,Fabs,Frel,Class)
+        getline(isoform_file, buffer);  // Ignoring isoform details
+        getline(isoform_file, buffer);  // Ignoring the header (rank,node,Fabs,Frel,Class)
         bool guard = true;
         while (guard) {
             // Getting the second isoform name
@@ -119,6 +121,7 @@ int main(int argc, char *argv[]) {
                 leaf_transcript[0] = toupper(leaf_transcript[0]);  // For coherence with the other isoform id
                 getline(isoform_file, buffer, ',');                // Another dummy reading
                 getline(isoform_file, frel, ',');
+                // Deprecated, use python script
                 /*if (use_names) {
                     try {
                         seed_gene = dictionary.at(seed_transcript);
@@ -130,7 +133,7 @@ int main(int argc, char *argv[]) {
                         ++n_tids_notfound;
                     }
                 } else {*/
-                    csv << seed_transcript << ';' << leaf_transcript << ';' << frel << '\n';
+                csv << seed_transcript << ';' << leaf_transcript << ';' << frel << '\n';
                 //}
             } else {
                 guard = false;
@@ -140,13 +143,13 @@ int main(int argc, char *argv[]) {
     }
     csv.close();
 
-    //error_log.close();
+    // error_log.close();
 
     // Calculating the running time
     auto stop = chrono::high_resolution_clock::now();
     auto duration = chrono::duration_cast<chrono::minutes>(stop - start);
     cout << "Done! Running time " << duration.count() << " minutes\n";
-    
+
     /*
     if (n_tids_notfound > 0) {
         cout << "Number of tids not found: " << n_tids_notfound;
